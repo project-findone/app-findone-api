@@ -35,9 +35,5 @@
     "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify src/server.ts",
     "test": "jest --passWithNoTests",
     "test:staged": "jest --passWithNoTests --watch"
-  },
-  "prisma": {
-    "schema": "./src/shared/infra/prisma",
-    "migrateOutput": "src/shared/infra/prisma/migrations"
   }
 }
