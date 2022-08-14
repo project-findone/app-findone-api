@@ -8,11 +8,11 @@
     "forceConsistentCasingInFileNames": true,                
     "strict": true,                                      
     "skipLibCheck": true,                               
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "paths": {
-      "@controllers/*": ["./src/controllers/*"],
-      "@implementations/*": ["./src/implementations/*"],
-      "@config/*": ["./src/config/*"]
+      "@modules/*": ["modules/*"],
+      "@shared/*": ["shared/*"],
+      "@config/*": ["config/*"]
     }
   }
 }
