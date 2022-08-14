@@ -142,7 +142,7 @@ model tb_mensagem {
   @@index([SESSAO_CHAT_ID_FK], map: "SESSAO_CHAT_ID_FK")
 }
 
-model pessoa_tipo {
+model tb_pessoa {
   TB_PESSOA_ID                Int              @id @default(autoincrement())
   PESSOA_TIPO_ID_FK           Int
   TB_PESSOA_NOME              String           @db.VarChar(64)
