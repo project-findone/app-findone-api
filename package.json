@@ -1,0 +1,12 @@
+{
+  "name": "app-findone-api",
+  "version": "1.0.0",
+  "description": "API for the FindOne project",
+  "main": "index.js",
+  "author": "Izaias Henrique",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "git-commit-msg-linter": "^4.1.3"
+  }
+}
