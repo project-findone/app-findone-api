@@ -8,7 +8,7 @@ interface IRequest {
 
 class CreateUserService {
   constructor (private createUserRepository: ICreateUserRepository) {}
-  async handle (request: IRequest): Promise<User> {
+  async handle (request: IRequest): Promise<User | null> {
     const user = await this.createUserRepository.create(request.data)
     return user
   }

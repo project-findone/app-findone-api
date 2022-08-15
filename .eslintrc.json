@@ -12,6 +12,7 @@
     },
     "rules": {
         "@typescript-eslint/method-signature-style": "off",
-        "@typescript-eslint/prefer-readonly": "off"
+        "@typescript-eslint/prefer-readonly": "off",
+        "@typescript-eslint/no-misused-promises": "off"
     }
 }

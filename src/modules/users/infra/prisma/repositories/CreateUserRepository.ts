@@ -10,9 +10,9 @@ class CreateUserRepository implements ICreateUserRepository {
     return user
   }
 
-  async findByEmail (email: string): Promise<User | null> {
-    const user = await prisma.tb_pessoa.findFirst({ where: { TB_PESSOA_EMAIL: email } })
-    return user
+  async findByEmail ({ TB_PESSOA_EMAIL }: ICreateUserDTO): Promise<User | null> {
+    const userFiltred = await prisma.tb_pessoa.findFirst({ where: { TB_PESSOA_EMAIL } })
+    return userFiltred
   }
 }
 

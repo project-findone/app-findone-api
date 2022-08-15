@@ -8,7 +8,7 @@ export interface ICreateUserDTO {
   TB_PESSOA_CPF: number | null
   TB_PESSOA_IDADE: number | null
   TB_PESSOA_SEXO: string | null
-  TB_PESSOA_EMAIL: string | null
+  TB_PESSOA_EMAIL: string
   TB_PESSOA_SENHA: string | null
   TB_PESSOA_TEL: string | null
   TB_PESSOA_CEP: number | null

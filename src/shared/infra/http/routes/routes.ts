@@ -1,5 +1,8 @@
-export default class Routes{
-    async handle(req: any, res: any, next: any): Promise<undefined> => {
-        return undefined
-    }
-}
+import usersRouter from '@modules/users/infra/http/routes/users.routes'
+import { Router } from 'express'
+
+const routes = Router()
+
+routes.use('/user/', usersRouter)
+
+export default routes
