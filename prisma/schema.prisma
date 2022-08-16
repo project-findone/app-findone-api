@@ -144,7 +144,7 @@ model tb_mensagem {
 
 model tb_pessoa {
   TB_PESSOA_ID                Int              @id @default(autoincrement())
-  PESSOA_TIPO_ID_FK           Int
+  TB_PESSOA_TIPO_ID_FK           Int
   TB_PESSOA_NOME              String           @db.VarChar(64)
   TB_PESSOA_SOBRENOME         String?          @db.VarChar(64)
   TB_PESSOA_DATA_NASC         DateTime?        @db.Date
@@ -155,27 +155,27 @@ model tb_pessoa {
   TB_PESSOA_SENHA             String?          @db.VarChar(64)
   TB_PESSOA_TEL               String?          @db.VarChar(16)
   TB_PESSOA_CEP               Int?
-  ESTADO_ID_FK                Int?
+  TB_ESTADO_ID_FK                Int?
   TB_PESSOA_CIDADE            String?          @db.VarChar(64)
   TB_PESSOA_BIO               String?          @db.VarChar(256)
   TB_PESSOA_PONTOS            Int?             @db.UnsignedInt
-  PESSOA_RESPONSAVEL_FK       Int?
+  TB_PESSOA_RESPONSAVEL_FK       Int?
   TB_PESSOA_DEFIENCIA         String?          @db.VarChar(128)
   TB_PESSOA_PARENTESCO        String?          @db.VarChar(16)
   TB_PESSOA_IMAGEM            Bytes?           @db.Blob
   TB_PESSOA_CARACTERISTICA_AD String?          @db.VarChar(128)
-  tb_pessoa_tipo              tb_pessoa_tipo   @relation(fields: [PESSOA_TIPO_ID_FK], references: [TB_PESSOA_TIPO_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_pessoa_ibfk_1")
-  tb_estado                   tb_estado?       @relation(fields: [ESTADO_ID_FK], references: [TB_ESTADO_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_pessoa_ibfk_2")
-  tb_pessoa                   tb_pessoa?       @relation("tb_pessoaTotb_pessoa", fields: [PESSOA_RESPONSAVEL_FK], references: [TB_PESSOA_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_pessoa_ibfk_3")
+  tb_pessoa_tipo              tb_pessoa_tipo   @relation(fields: [TB_PESSOA_TIPO_ID_FK], references: [TB_PESSOA_TIPO_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_pessoa_ibfk_1")
+  tb_estado                   tb_estado?       @relation(fields: [TB_ESTADO_ID_FK], references: [TB_ESTADO_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_pessoa_ibfk_2")
+  tb_pessoa                   tb_pessoa?       @relation("tb_pessoaTotb_pessoa", fields: [TB_PESSOA_RESPONSAVEL_FK], references: [TB_PESSOA_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_pessoa_ibfk_3")
   tb_apoia_caso               tb_apoia_caso[]
   tb_carac_desa               tb_carac_desa[]
   tb_caso                     tb_caso[]
   tb_certificado              tb_certificado[]
   other_tb_pessoa             tb_pessoa[]      @relation("tb_pessoaTotb_pessoa")
 
-  @@index([ESTADO_ID_FK], map: "ESTADO_ID_FK")
-  @@index([PESSOA_RESPONSAVEL_FK], map: "PESSOA_RESPONSAVEL_FK")
-  @@index([PESSOA_TIPO_ID_FK], map: "PESSOA_TIPO_ID_FK")
+  @@index([TB_ESTADO_ID_FK], map: "TB_ESTADO_ID_FK")
+  @@index([TB_PESSOA_RESPONSAVEL_FK], map: "TB_PESSOA_RESPONSAVEL_FK")
+  @@index([TB_PESSOA_TIPO_ID_FK], map: "TB_PESSOA_TIPO_ID_FK")
 }
 
 model tb_pessoa_tipo {

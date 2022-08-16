@@ -3,5 +3,5 @@ import { User } from '../infra/prisma/entities/User'
 
 export interface ICreateUserRepository{
   create(data: ICreateUserDTO): Promise<User>
-  findByEmail(data: ICreateUserDTO): Promise<User | null>
+  findByEmail(email: string): Promise<User | null>
 }

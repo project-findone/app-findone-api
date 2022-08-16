@@ -8,7 +8,15 @@ interface IRequest {
 
 class CreateUserService {
   constructor (private createUserRepository: ICreateUserRepository) {}
-  async handle (request: IRequest): Promise<User | null> {
+  public async handle (request: IRequest): Promise<User | null> {
+    const { TB_PESSOA_EMAIL } = request.data
+
+    const userExists = await this.createUserRepository.findByEmail(TB_PESSOA_EMAIL)
+
+    if (userExists != null) {
+      throw new Error('User is exists')
+    }
+
     const user = await this.createUserRepository.create(request.data)
     return user
   }
