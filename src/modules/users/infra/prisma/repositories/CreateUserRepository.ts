@@ -1,19 +1,21 @@
 import { ICreateUserDTO } from '@modules/users/dtos/ICreateUserDTO'
 import { ICreateUserRepository } from '@modules/users/repositories/ICreateUserRepository'
-import { User } from '../entities/User'
 
 import prisma from '@shared/infra/prisma'
+import { Person } from '@prisma/client'
 
-class CreateUserRepository implements ICreateUserRepository {
-  async create (data: ICreateUserDTO): Promise<User> {
-    const user = await prisma.tb_pessoa.create({ data })
+export class CreateUserRepository implements ICreateUserRepository {
+  async create (data: ICreateUserDTO): Promise<Person> {
+    const user = prisma.person.create({
+      data: {
+        ...data
+      }
+    })
     return user
   }
 
-  async findByEmail (email: string): Promise<User | null> {
-    const userFiltred = await prisma.tb_pessoa.findFirst({ where: { TB_PESSOA_EMAIL: email } })
+  async findByEmail (email: string): Promise<Person | null> {
+    const userFiltred = await prisma.person.findFirst({ where: { email } })
     return userFiltred
   }
 }
-
-export default CreateUserRepository

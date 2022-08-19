@@ -19,7 +19,7 @@ model Person {
   email                       String?          @db.VarChar(128) @map("TB_PESSOA_EMAIL")
   password                    String?          @db.VarChar(64) @map("TB_PESSOA_SENHA")
   phone_number                String?          @db.VarChar(16) @map("TB_PESSOA_TEL")
-  personCEP                   Int              @map("TB_PESSOA_CEP")
+  personCEP                   String              @map("TB_PESSOA_CEP")
   state_id                    Int              @map("TB_PESSOA_ESTADO_ID_FK")
   city                        String           @db.VarChar(64) @map("TB_PESSOA_CIDADE")
   person_biografy             String?          @db.VarChar(256) @map("TB_PESSOA_BIO")
@@ -37,14 +37,14 @@ model Person {
 
 model PersonType {
   personType_id       Int         @id @default(autoincrement()) @map("TB_PESSOA_TIPO_ID")
-  personType_name     String      @unique(map: "TB_PESSOA_TIPO_NOME") @db.VarChar(16)
+  personType_name     String      @unique(map: "TB_PESSOA_TIPO_NOME") @db.VarChar(16) @map("TB_PESSOA_TIPO_NOME")
   person              Person[]
   @@map("TB_PESSOA_TIPO")
 }
 
 model State {
   state_id      Int       @id @default(autoincrement()) @map("TB_ESTADO_ID")
-  state_name    String    @unique(map: "TB_ESTADO_NOME") @db.Char(2)
+  state_name    String    @unique(map: "TB_ESTADO_NOME") @db.Char(2) @map("TB_ESTADO_NOME")
   person        Person[]
   @@map("TB_ESTADO")
 }

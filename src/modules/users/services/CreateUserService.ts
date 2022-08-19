@@ -1,23 +1,28 @@
 import { ICreateUserDTO } from '../dtos/ICreateUserDTO'
-import { User } from '../infra/prisma/entities/User'
+import { User } from '../infra/prisma/entities/Person'
 import { ICreateUserRepository } from '../repositories/ICreateUserRepository'
-
-interface IRequest {
-  data: ICreateUserDTO
-}
 
 class CreateUserService {
   constructor (private createUserRepository: ICreateUserRepository) {}
-  public async handle (request: IRequest): Promise<User | null> {
-    const { TB_PESSOA_EMAIL } = request.data
+  public async handle (request: ICreateUserDTO): Promise<User | undefined> {
+    const { email } = request
 
-    const userExists = await this.createUserRepository.findByEmail(TB_PESSOA_EMAIL)
-
-    if (userExists != null) {
-      throw new Error('User is exists')
+    if (!email) {
+      throw new Error('A propriedade de e-mail está ausente.')
     }
 
-    const user = await this.createUserRepository.create(request.data)
+    const userExists = await this.createUserRepository.findByEmail(email)
+
+    if (userExists) {
+      throw new Error('O e-mail já foi cadastrado.')
+    }
+
+    const user = await this.createUserRepository.create(request)
+
+    if (!user) {
+      throw new Error('Houve um erro ao cadastrar o usuário.')
+    }
+
     return user
   }
 }
