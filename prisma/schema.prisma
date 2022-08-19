@@ -7,195 +7,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model tb_anexo {
-  TB_ANEXO_ID        Int             @id @default(autoincrement())
-  CONTRIBUICAO_ID_FK Int
-  TB_ANEXO_BINARIO   Bytes           @db.Blob
-  TB_ANEXO_NOME      String          @db.VarChar(64)
-  tb_contribuicao    tb_contribuicao @relation(fields: [CONTRIBUICAO_ID_FK], references: [TB_CONTRIBUICAO_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_anexo_ibfk_1")
+model Person {
+  person_id                   Int              @id @default(autoincrement()) @map("TB_PESSOA_ID")
+  personType_id               Int              @map("TB_PESSOA_TIPO_ID_FK")
+  name                        String           @db.VarChar(64) @map("TB_PESSOA_NOME")
+  lastname                    String           @db.VarChar(64) @map("TB_PESSOA_SOBRENOME")
+  birth_date                  DateTime?        @db.Date @map("TB_PESSOA_DATA_NASC")
+  personCPF                   String?          @map("TB_PESSOA_CPF")
+  age                         Int?             @map("TB_PESSOA_IDADE")
+  gender                      String?          @db.VarChar(16) @map("TB_PESSOA_SEXO")
+  email                       String?          @db.VarChar(128) @map("TB_PESSOA_EMAIL")
+  password                    String?          @db.VarChar(64) @map("TB_PESSOA_SENHA")
+  phone_number                String?          @db.VarChar(16) @map("TB_PESSOA_TEL")
+  personCEP                   Int              @map("TB_PESSOA_CEP")
+  state_id                    Int              @map("TB_PESSOA_ESTADO_ID_FK")
+  city                        String           @db.VarChar(64) @map("TB_PESSOA_CIDADE")
+  person_biografy             String?          @db.VarChar(256) @map("TB_PESSOA_BIO")
+  score                       Int?             @db.UnsignedInt @map("TB_PESSOA_PONTOS")
+  owner_id                    Int?             @map("TB_PESSOA_RESPONSAVEL_FK")
+  person_deficiency           String?          @db.VarChar(128) @map("TB_PESSOA_DEFICIENCIA")
+  person_kinship              String?          @db.VarChar(16) @map("TB_PESSOA_PARENTESCO")
+  person_image                String?          @map("TB_PESSOA_IMAGEM")
+  personType                  PersonType       @relation(fields: [personType_id], references: [personType_id], onDelete: NoAction, onUpdate: NoAction, map: "TB_PESSOA_ID_TB_PESSOA_TIPO_FK")
+  state                       State            @relation(fields: [state_id], references: [state_id], onDelete: NoAction, onUpdate: NoAction, map: "TB_PESSOA_ID_TB_ESTADO_FK")
 
-  @@index([CONTRIBUICAO_ID_FK], map: "CONTRIBUICAO_ID_FK")
+  @@index([personType_id], map: "TB_PESSOA_TIPO_ID_FK")
+  @@map("TB_PESSOA")
 }
 
-model tb_apoia_caso {
-  TB_APOIA_CASO_ID           Int              @id @default(autoincrement())
-  CASO_ID_FK                 Int
-  PESSOA_ID_FK               Int
-  TB_APOIA_CASO_DATA_ENTRADA DateTime         @db.DateTime(0)
-  TB_APOIA_CASO_DATA_SAIDA   DateTime?        @db.DateTime(0)
-  TB_APOIA_CASO_ATIVIDADE    DateTime?        @db.Time(0)
-  tb_caso                    tb_caso          @relation(fields: [CASO_ID_FK], references: [TB_CASO_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_apoia_caso_ibfk_1")
-  tb_pessoa                  tb_pessoa        @relation(fields: [PESSOA_ID_FK], references: [TB_PESSOA_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_apoia_caso_ibfk_2")
-  tb_sessao_chat             tb_sessao_chat[]
-
-  @@index([CASO_ID_FK], map: "CASO_ID_FK")
-  @@index([PESSOA_ID_FK], map: "PESSOA_ID_FK")
+model PersonType {
+  personType_id       Int         @id @default(autoincrement()) @map("TB_PESSOA_TIPO_ID")
+  personType_name     String      @unique(map: "TB_PESSOA_TIPO_NOME") @db.VarChar(16)
+  person              Person[]
+  @@map("TB_PESSOA_TIPO")
 }
 
-model tb_carac_desa {
-  TB_CARAC_DESA_ID     Int               @id @default(autoincrement())
-  PESSOA_ID_FK         Int
-  CARACTERISTICA_ID_FK Int
-  tb_pessoa            tb_pessoa         @relation(fields: [PESSOA_ID_FK], references: [TB_PESSOA_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_carac_desa_ibfk_1")
-  tb_caracteristica    tb_caracteristica @relation(fields: [CARACTERISTICA_ID_FK], references: [TB_CARACTERISTICA_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_carac_desa_ibfk_2")
-
-  @@index([CARACTERISTICA_ID_FK], map: "CARACTERISTICA_ID_FK")
-  @@index([PESSOA_ID_FK], map: "PESSOA_ID_FK")
+model State {
+  state_id      Int       @id @default(autoincrement()) @map("TB_ESTADO_ID")
+  state_name    String    @unique(map: "TB_ESTADO_NOME") @db.Char(2)
+  person        Person[]
+  @@map("TB_ESTADO")
 }
 
-model tb_caracteristica {
-  TB_CARACTERISTICA_ID      Int                    @id @default(autoincrement())
-  TB_CARACTERISTICA_NOME    String                 @db.VarChar(16)
-  CARACTERISTICA_TIPO_ID_FK Int
-  tb_caracteristica_tipo    tb_caracteristica_tipo @relation(fields: [CARACTERISTICA_TIPO_ID_FK], references: [TB_CARACTERISTICA_TIPO_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_caracteristica_ibfk_1")
-  tb_carac_desa             tb_carac_desa[]
 
-  @@index([CARACTERISTICA_TIPO_ID_FK], map: "CARACTERISTICA_TIPO_ID_FK")
-}
 
-model tb_caracteristica_tipo {
-  TB_CARACTERISTICA_TIPO_ID   Int                 @id @default(autoincrement())
-  TB_CARACTERISTICA_TIPO_NOME String              @unique(map: "TB_CARACTERISTICA_TIPO_NOME") @db.VarChar(16)
-  tb_caracteristica           tb_caracteristica[]
-}
-
-model tb_caso {
-  TB_CASO_ID          Int             @id @default(autoincrement())
-  STATUS_ID_FK        Int
-  PESSOA_ID_FK        Int
-  TB_CASO_TIPO_ID_FK  Int
-  ESTADO_ID_FK        Int
-  TB_CASO_CIDADE      String          @db.VarChar(64)
-  TB_CASO_BAIRRO      String?         @db.VarChar(64)
-  TB_CASO_RUA         String?         @db.VarChar(64)
-  TB_CASO_DESC        String?         @db.VarChar(512)
-  TB_CASO_DAT_INICIO  DateTime        @db.Date
-  TB_CASO_DAT_TERMINO DateTime?       @db.Date
-  tb_status           tb_status       @relation(fields: [STATUS_ID_FK], references: [TB_STATUS_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_caso_ibfk_1")
-  tb_pessoa           tb_pessoa       @relation(fields: [PESSOA_ID_FK], references: [TB_PESSOA_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_caso_ibfk_2")
-  tb_estado           tb_estado       @relation(fields: [ESTADO_ID_FK], references: [TB_ESTADO_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_caso_ibfk_3")
-  tb_caso_tipo        tb_caso_tipo    @relation(fields: [TB_CASO_TIPO_ID_FK], references: [TB_CASO_TIPO_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_caso_ibfk_4")
-  tb_apoia_caso       tb_apoia_caso[]
-
-  @@index([ESTADO_ID_FK], map: "ESTADO_ID_FK")
-  @@index([PESSOA_ID_FK], map: "PESSOA_ID_FK")
-  @@index([STATUS_ID_FK], map: "STATUS_ID_FK")
-  @@index([TB_CASO_TIPO_ID_FK], map: "TB_CASO_TIPO_ID_FK")
-}
-
-model tb_caso_tipo {
-  TB_CASO_TIPO_ID   Int       @id @default(autoincrement())
-  TB_CASO_TIPO_NOME String    @unique(map: "TB_CASO_TIPO_NOME") @db.VarChar(16)
-  tb_caso           tb_caso[]
-}
-
-model tb_categoria {
-  TB_CATEGORIA_ID   Int               @id @default(autoincrement())
-  TB_CATEGORIA_NOME String            @unique(map: "TB_CATEGORIA_NOME") @db.VarChar(16)
-  tb_contribuicao   tb_contribuicao[]
-}
-
-model tb_certificado {
-  TB_CERTIFICADO_ID                Int       @id @default(autoincrement())
-  PESSOA_ID_FK                     Int
-  TB_CERTIFICADO_DATA_HORA_EMISSAO DateTime? @db.DateTime(0)
-  TB_CERTIFICADO_BINARIO           Bytes?    @db.Blob
-  TB_CERTIFICADO_COD_EMISSAO       Int       @unique(map: "TB_CERTIFICADO_COD_EMISSAO")
-  TB_CERTIFICADO_CONCLUSAO         DateTime  @db.DateTime(0)
-  tb_pessoa                        tb_pessoa @relation(fields: [PESSOA_ID_FK], references: [TB_PESSOA_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_certificado_ibfk_1")
-
-  @@index([PESSOA_ID_FK], map: "PESSOA_ID_FK")
-}
-
-model tb_contribuicao {
-  TB_CONTRIBUICAO_ID              Int            @id @default(autoincrement())
-  SESSAO_CHAT_ID_FK               Int
-  CATEGORIA_ID_FK                 Int
-  TB_CONTRIBUICAO_DESC            String         @db.VarChar(512)
-  TB_CONTRIBUICAO_PONTOS          Int?           @db.UnsignedInt
-  TB_CONTRIBUICAO_DATA_HORA_ENVIO DateTime       @db.DateTime(0)
-  TB_CONTRIBUICAO_EMISSOR         Int
-  tb_sessao_chat                  tb_sessao_chat @relation(fields: [SESSAO_CHAT_ID_FK], references: [TB_SESSAO_CHAT_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_contribuicao_ibfk_1")
-  tb_categoria                    tb_categoria   @relation(fields: [CATEGORIA_ID_FK], references: [TB_CATEGORIA_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_contribuicao_ibfk_2")
-  tb_anexo                        tb_anexo[]
-
-  @@index([CATEGORIA_ID_FK], map: "CATEGORIA_ID_FK")
-  @@index([SESSAO_CHAT_ID_FK], map: "SESSAO_CHAT_ID_FK")
-}
-
-model tb_estado {
-  TB_ESTADO_ID   Int         @id @default(autoincrement())
-  TB_ESTADO_NOME String      @unique(map: "TB_ESTADO_NOME") @db.Char(2)
-  tb_caso        tb_caso[]
-  tb_pessoa      tb_pessoa[]
-}
-
-model tb_mensagem {
-  TB_MENSAGEM_ID              Int            @id @default(autoincrement())
-  SESSAO_CHAT_ID_FK           Int
-  TB_MENSAGEM_EMISSOR         Int
-  TB_MENSAGEM_RECEPTOR        Int
-  TB_MENSAGEM_DATA_HORA_ENVIO DateTime       @db.DateTime(0)
-  TB_MENSAGEM_DESC            String         @db.VarChar(1024)
-  tb_sessao_chat              tb_sessao_chat @relation(fields: [SESSAO_CHAT_ID_FK], references: [TB_SESSAO_CHAT_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_mensagem_ibfk_1")
-
-  @@index([SESSAO_CHAT_ID_FK], map: "SESSAO_CHAT_ID_FK")
-}
-
-model tb_pessoa {
-  TB_PESSOA_ID                Int              @id @default(autoincrement())
-  TB_PESSOA_TIPO_ID_FK           Int
-  TB_PESSOA_NOME              String           @db.VarChar(64)
-  TB_PESSOA_SOBRENOME         String?          @db.VarChar(64)
-  TB_PESSOA_DATA_NASC         DateTime?        @db.Date
-  TB_PESSOA_CPF               Int?
-  TB_PESSOA_IDADE             Int?
-  TB_PESSOA_SEXO              String?          @db.VarChar(16)
-  TB_PESSOA_EMAIL             String?          @db.VarChar(128)
-  TB_PESSOA_SENHA             String?          @db.VarChar(64)
-  TB_PESSOA_TEL               String?          @db.VarChar(16)
-  TB_PESSOA_CEP               Int?
-  TB_ESTADO_ID_FK                Int?
-  TB_PESSOA_CIDADE            String?          @db.VarChar(64)
-  TB_PESSOA_BIO               String?          @db.VarChar(256)
-  TB_PESSOA_PONTOS            Int?             @db.UnsignedInt
-  TB_PESSOA_RESPONSAVEL_FK       Int?
-  TB_PESSOA_DEFIENCIA         String?          @db.VarChar(128)
-  TB_PESSOA_PARENTESCO        String?          @db.VarChar(16)
-  TB_PESSOA_IMAGEM            Bytes?           @db.Blob
-  TB_PESSOA_CARACTERISTICA_AD String?          @db.VarChar(128)
-  tb_pessoa_tipo              tb_pessoa_tipo   @relation(fields: [TB_PESSOA_TIPO_ID_FK], references: [TB_PESSOA_TIPO_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_pessoa_ibfk_1")
-  tb_estado                   tb_estado?       @relation(fields: [TB_ESTADO_ID_FK], references: [TB_ESTADO_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_pessoa_ibfk_2")
-  tb_pessoa                   tb_pessoa?       @relation("tb_pessoaTotb_pessoa", fields: [TB_PESSOA_RESPONSAVEL_FK], references: [TB_PESSOA_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_pessoa_ibfk_3")
-  tb_apoia_caso               tb_apoia_caso[]
-  tb_carac_desa               tb_carac_desa[]
-  tb_caso                     tb_caso[]
-  tb_certificado              tb_certificado[]
-  other_tb_pessoa             tb_pessoa[]      @relation("tb_pessoaTotb_pessoa")
-
-  @@index([TB_ESTADO_ID_FK], map: "TB_ESTADO_ID_FK")
-  @@index([TB_PESSOA_RESPONSAVEL_FK], map: "TB_PESSOA_RESPONSAVEL_FK")
-  @@index([TB_PESSOA_TIPO_ID_FK], map: "TB_PESSOA_TIPO_ID_FK")
-}
-
-model tb_pessoa_tipo {
-  TB_PESSOA_TIPO_ID   Int         @id @default(autoincrement())
-  TB_PESSOA_TIPO_NOME String      @unique(map: "TB_PESSOA_TIPO_NOME") @db.VarChar(16)
-  tb_pessoa           tb_pessoa[]
-}
-
-model tb_sessao_chat {
-  TB_SESSAO_CHAT_ID Int               @id @default(autoincrement())
-  APOIA_CASO_ID_FK  Int
-  tb_apoia_caso     tb_apoia_caso     @relation(fields: [APOIA_CASO_ID_FK], references: [TB_APOIA_CASO_ID], onDelete: NoAction, onUpdate: NoAction, map: "tb_sessao_chat_ibfk_1")
-  tb_contribuicao   tb_contribuicao[]
-  tb_mensagem       tb_mensagem[]
-
-  @@index([APOIA_CASO_ID_FK], map: "APOIA_CASO_ID_FK")
-}
-
-model tb_status {
-  TB_STATUS_ID   Int       @id @default(autoincrement())
-  TB_STATUS_NOME String    @unique(map: "TB_STATUS_NOME") @db.VarChar(16)
-  tb_caso        tb_caso[]
-}
