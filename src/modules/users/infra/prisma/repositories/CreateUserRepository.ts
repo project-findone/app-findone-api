@@ -2,11 +2,11 @@ import { ICreateUserDTO } from '@modules/users/dtos/ICreateUserDTO'
 import { ICreateUserRepository } from '@modules/users/repositories/ICreateUserRepository'
 
 import prisma from '@shared/infra/prisma'
-import { Person } from '@prisma/client'
+import { PersonEntity } from '@shared/infra/prisma/entities/Person'
 
 export class CreateUserRepository implements ICreateUserRepository {
-  async create (data: ICreateUserDTO): Promise<Person> {
-    const user = prisma.person.create({
+  async create (data: ICreateUserDTO): Promise<PersonEntity> {
+    const user = await prisma.person.create({
       data: {
         ...data
       }
@@ -14,7 +14,7 @@ export class CreateUserRepository implements ICreateUserRepository {
     return user
   }
 
-  async findByEmail (email: string): Promise<Person | null> {
+  async findByEmail (email: string): Promise<PersonEntity | null> {
     const userFiltred = await prisma.person.findFirst({ where: { email } })
     return userFiltred
   }

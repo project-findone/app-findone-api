@@ -1,6 +1,6 @@
 import { Person } from '@prisma/client'
 
-export class User implements Person {
+export class PersonEntity implements Person {
   public person_id!: number
   public personType_id!: number
   public name!: string
@@ -12,7 +12,7 @@ export class User implements Person {
   public email!: string | null
   public password!: string | null
   public phone_number!: string | null
-  public personCEP!: number
+  public personCEP!: string
   public state_id!: number
   public city!: string
   public person_biografy!: string | null
@@ -22,7 +22,7 @@ export class User implements Person {
   public person_kinship!: string | null
   public person_image!: string | null
 
-  constructor (props: User) {
+  constructor (props: PersonEntity) {
     Object.assign(this, props)
   }
 }

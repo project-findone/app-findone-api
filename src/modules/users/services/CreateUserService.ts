@@ -1,14 +1,18 @@
+import { PersonEntity } from '@shared/infra/prisma/entities/Person'
 import { ICreateUserDTO } from '../dtos/ICreateUserDTO'
-import { User } from '../infra/prisma/entities/Person'
 import { ICreateUserRepository } from '../repositories/ICreateUserRepository'
+
+import { userSchema } from '../infra/helpers/UserValidationSchema'
 
 class CreateUserService {
   constructor (private createUserRepository: ICreateUserRepository) {}
-  public async handle (request: ICreateUserDTO): Promise<User | undefined> {
+  public async handle (request: ICreateUserDTO): Promise<PersonEntity | undefined> {
     const { email } = request
 
-    if (!email) {
-      throw new Error('A propriedade de e-mail está ausente.')
+    const { error } = userSchema.validate(request)
+
+    if (error !== undefined) {
+      throw new Error(`Alguns parâmetros estão ausentes' ${String(error)}`)
     }
 
     const userExists = await this.createUserRepository.findByEmail(email)
