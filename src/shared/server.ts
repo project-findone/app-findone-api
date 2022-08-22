@@ -1,8 +1,10 @@
 import express from 'express'
 import cors from 'cors'
 import 'express-async-errors'
+import 'reflect-metadata'
 
 import Routes from './infra/http/routes/routes'
+import './container/index'
 
 const app = express()
 

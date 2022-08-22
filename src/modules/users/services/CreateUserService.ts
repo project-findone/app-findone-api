@@ -1,11 +1,17 @@
 import { PersonEntity } from '@shared/infra/prisma/entities/Person'
 import { ICreateUserDTO } from '../dtos/ICreateUserDTO'
-import { ICreateUserRepository } from '../repositories/ICreateUserRepository'
+import { IUsersRepository } from '../repositories/IUsersRepository'
+import { inject, injectable } from 'tsyringe'
 
 import { userSchema } from '../infra/helpers/UserValidationSchema'
 
+@injectable()
 class CreateUserService {
-  constructor (private createUserRepository: ICreateUserRepository) {}
+  constructor (
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository
+  ) {}
+
   public async handle (request: ICreateUserDTO): Promise<PersonEntity | undefined> {
     const { email } = request
 
@@ -15,13 +21,13 @@ class CreateUserService {
       throw new Error(`Alguns parâmetros estão ausentes' ${String(error)}`)
     }
 
-    const userExists = await this.createUserRepository.findByEmail(email)
+    const userExists = await this.usersRepository.findByEmail(email)
 
     if (userExists) {
       throw new Error('O e-mail já foi cadastrado.')
     }
 
-    const user = await this.createUserRepository.create(request)
+    const user = await this.usersRepository.create(request)
 
     if (!user) {
       throw new Error('Houve um erro ao cadastrar o usuário.')
