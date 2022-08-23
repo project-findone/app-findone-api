@@ -2,6 +2,7 @@ import { PersonEntity } from '@shared/infra/prisma/entities/Person'
 import { ICreateUserDTO } from '../dtos/ICreateUserDTO'
 import { IUsersRepository } from '../repositories/IUsersRepository'
 import { inject, injectable } from 'tsyringe'
+import { hash } from 'bcrypt'
 
 import { userSchema } from '../infra/helpers/UserValidationSchema'
 
@@ -13,7 +14,7 @@ class CreateUserService {
   ) {}
 
   public async handle (request: ICreateUserDTO): Promise<PersonEntity | undefined> {
-    const { email } = request
+    const { email, password } = request
 
     const { error } = userSchema.validate(request)
 
@@ -26,6 +27,14 @@ class CreateUserService {
     if (userExists) {
       throw new Error('O e-mail já foi cadastrado.')
     }
+
+    const hashedPassword = await hash(password, 12)
+
+    if (!hashedPassword) {
+      throw new Error('Houve um erro ao criptografar a senha.')
+    }
+
+    request.password = hashedPassword
 
     const user = await this.usersRepository.create(request)
 
