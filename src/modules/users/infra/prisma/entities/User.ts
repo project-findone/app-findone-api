@@ -10,7 +10,7 @@ export class User implements Person {
   public age!: number | null
   public gender!: string
   public email!: string
-  public password!: string
+  public password!: string | null
   public phone_number!: string
   public personCEP!: string
   public state_id!: number
