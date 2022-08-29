@@ -1,7 +1,7 @@
-import { PersonEntity } from '@shared/infra/prisma/entities/Person'
 import { ICreateUserDTO } from '../dtos/ICreateUserDTO'
+import { User } from '../infra/prisma/entities/User'
 
 export interface IUsersRepository{
-  create(data: ICreateUserDTO): Promise<PersonEntity>
-  findByEmail(email: string): Promise<PersonEntity | null>
+  create(data: ICreateUserDTO): Promise<User>
+  findByEmail(email: string): Promise<User | null>
 }
