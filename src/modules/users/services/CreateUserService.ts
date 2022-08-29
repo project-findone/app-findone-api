@@ -1,4 +1,4 @@
-import { PersonEntity } from '@shared/infra/prisma/entities/Person'
+import { User } from '../infra/prisma/entities/User'
 import { ICreateUserDTO } from '../dtos/ICreateUserDTO'
 import { IUsersRepository } from '../repositories/IUsersRepository'
 import { inject, injectable } from 'tsyringe'
@@ -13,7 +13,7 @@ class CreateUserService {
     private usersRepository: IUsersRepository
   ) {}
 
-  public async handle (request: ICreateUserDTO): Promise<PersonEntity | undefined> {
+  public async handle (request: ICreateUserDTO): Promise<User | undefined | {}> {
     const { email, password } = request
 
     const { error } = userSchema.validate(request)
@@ -42,7 +42,9 @@ class CreateUserService {
       throw new Error('Houve um erro ao cadastrar o usuário.')
     }
 
-    return user
+    const { password: _, ...response } = user
+
+    return response
   }
 }
 
