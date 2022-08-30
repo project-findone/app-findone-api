@@ -5,4 +5,5 @@ export interface IUsersRepository{
   create(data: ICreateUserDTO): Promise<User>
   findByEmail(email: string): Promise<User | null>
   verifyEmail(email: string): Promise<User | null>
+  updatePass(email: string, newPassword: string): Promise<User>
 }

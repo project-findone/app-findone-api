@@ -15,7 +15,7 @@ export class UsersRepository implements IUsersRepository {
   }
 
   async findByEmail (email: string): Promise<User | null> {
-    const userFiltred = await prisma.person.findFirst({ where: { email } })
+    const userFiltred = await prisma.person.findUnique({ where: { email } })
     return userFiltred as User
   }
 
@@ -31,5 +31,14 @@ export class UsersRepository implements IUsersRepository {
       }
     })
     return userVerified as User
+  }
+
+  async updatePass (email: string, newPassword: string): Promise<User> {
+    const userUpdated = await prisma.person.update({
+      where: { email },
+      data: { password: newPassword }
+    })
+
+    return userUpdated as User
   }
 }
