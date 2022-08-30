@@ -21,6 +21,7 @@ export class PersonEntity implements Person {
   public person_deficiency!: string | null
   public person_kinship!: string | null
   public person_image!: string | null
+  public verified!: boolean
 
   constructor (props: PersonEntity) {
     Object.assign(this, props)
