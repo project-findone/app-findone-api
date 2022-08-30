@@ -18,4 +18,18 @@ export class UsersRepository implements IUsersRepository {
     const userFiltred = await prisma.person.findFirst({ where: { email } })
     return userFiltred as User
   }
+
+  async verifyEmail (email: string): Promise<User | null> {
+    const userVerified = await prisma.person.update({
+      where: { email },
+      data: {
+        verified: true
+      },
+      select: {
+        email: true,
+        verified: true
+      }
+    })
+    return userVerified as User
+  }
 }
