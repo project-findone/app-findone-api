@@ -1,4 +1,4 @@
 export interface ISendMailDTO {
-  to: {email: string}
+  to: string
   body: string
 }

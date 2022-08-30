@@ -5,6 +5,10 @@ import { inject, injectable } from 'tsyringe'
 import AuthConfig from '@config/auth'
 import { IMailProvider } from '@shared/container/providers/MailProvider/Models/IMailProvider'
 
+interface IRequest{
+  email: string
+}
+
 interface IResponse {
   token: string
 }
@@ -15,22 +19,24 @@ export class TokenVerificationService {
     @inject('EtherealMailProvider')
     private mailProvider: IMailProvider) {}
 
-  public async handle (email: string): Promise<IResponse> {
+  public async handle (data: IRequest): Promise<IResponse> {
     const { JWT, AES } = AuthConfig
 
-    if (!email) {
-      throw new Error(' Nenhum e-mail foi encontrado.')
-    }
+    const { email } = data
 
-    const verifyCode = (Math.floor(Math.random() * 10000) + 1000).toString()
+    if (!email) {
+      throw new Error('O e-mail não foi informado.')
+    }
 
     if (!AES.Secret) {
       throw new Error('O AES Secret não foi encontrado.')
     }
 
+    const verifyCode = (Math.floor(Math.random() * 10000) + 1000).toString()
+
     try {
       const data = {
-        to: { email: JSON.stringify(email) },
+        to: email,
         body: verifyCode
       }
       await this.mailProvider.sendMail(data)

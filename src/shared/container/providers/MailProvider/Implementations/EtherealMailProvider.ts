@@ -23,14 +23,15 @@ export class EtherealMailProvider implements IMailProvider {
 
   public async sendMail (data: ISendMailDTO): Promise<void> {
     await this.initialize()
-    const { email } = data.to
+
+    const { to, body } = data
 
     const message = await this.client.sendMail({
       from: ' Equipe FindOne <projetofindone@gmail.com> ',
-      to: email,
+      to,
       subject: 'Código de Verificação - FindOne',
       text: `Verifique a sua conta para ter acesso à plataforma FindOne! 
-      \n \nCódigo de verificação: ${data.body}`
+      \n \nCódigo de verificação: ${body}`
     }).catch(() => { throw new Error('O e-mail informado é inválido.') })
 
     console.log('Message sent: %s', message.messageId)
