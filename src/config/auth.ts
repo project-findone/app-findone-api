@@ -3,6 +3,10 @@ dotenv.config()
 
 export default {
   JWT: {
-    JWTSecret: process.env.JWT_SECRET as string
+    Secret: process.env.JWT_SECRET as string
+  },
+
+  AES: {
+    Secret: process.env.AES_SECRET as string
   }
 }

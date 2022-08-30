@@ -15,14 +15,14 @@ export function ensureAuthenticated (
     throw new Error('O token de autenticação está ausente.')
   }
 
-  if (!JWT.JWTSecret) {
-    throw new Error('O JWTSecret não foi encontrado.')
+  if (!JWT.Secret) {
+    throw new Error('O JWT Secret não foi encontrado.')
   }
 
   const [, token] = authHeader.split(' ')
 
   try {
-    const decoded = verify(token, JWT.JWTSecret)
+    const decoded = verify(token, JWT.Secret)
     const { sub } = decoded
 
     request.user = {

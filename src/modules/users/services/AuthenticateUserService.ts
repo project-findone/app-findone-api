@@ -40,7 +40,7 @@ export class AuthenticateUserService {
     }
 
     try {
-      const token = sign({}, JWT.JWTSecret, {
+      const token = sign({}, JWT.Secret, {
         subject: String(user.person_id),
         expiresIn: '1d'
       })
