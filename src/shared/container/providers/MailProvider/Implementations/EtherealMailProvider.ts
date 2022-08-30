@@ -1,5 +1,6 @@
 import nodemailer, { Transporter } from 'nodemailer'
 import { IMailProvider } from '../Models/IMailProvider'
+import { ISendMailDTO } from '../Models/ISendMailDTO'
 
 export class EtherealMailProvider implements IMailProvider {
   private client!: Transporter
@@ -20,17 +21,17 @@ export class EtherealMailProvider implements IMailProvider {
     this.client = transporter
   }
 
-  public async sendMail (to: string, body: string): Promise<void> {
-    if (!this.client) {
-      throw new Error(' O transportador precisa ser iniciado.')
-    }
+  public async sendMail (data: ISendMailDTO): Promise<void> {
+    await this.initialize()
+    const { email } = data.to
 
     const message = await this.client.sendMail({
       from: ' Equipe FindOne <projetofindone@gmail.com> ',
-      to,
+      to: email,
       subject: 'Código de Verificação - FindOne',
-      text: body
-    })
+      text: `Verifique a sua conta para ter acesso à plataforma FindOne! 
+      \n \nCódigo de verificação: ${data.body}`
+    }).catch(() => { throw new Error('O e-mail informado é inválido.') })
 
     console.log('Message sent: %s', message.messageId)
     // Preview only available when sending through an Ethereal account
