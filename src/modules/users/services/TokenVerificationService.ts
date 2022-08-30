@@ -1,4 +1,6 @@
 import { sign } from 'jsonwebtoken'
+import {} from 'crypto-js/aes'
+
 import AuthConfig from '@config/auth'
 
 interface IResponse {
