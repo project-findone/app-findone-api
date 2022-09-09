@@ -6,6 +6,7 @@ const usersRouter = Router()
 
 usersRouter.post('/', async (request, response) => {
   const createUserService = container.resolve(CreateUserService)
+  console.log(request.body)
   const user = await createUserService.handle(request.body)
   return response.json({ message: user })
 })

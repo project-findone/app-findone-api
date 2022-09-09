@@ -1,4 +1,5 @@
 import { ICreateUserDTO } from '@modules/users/dtos/ICreateUserDTO'
+import { IUpdateUserDTO } from '@modules/users/dtos/IUpdateUserDTO'
 import { IUsersRepository } from '@modules/users/repositories/IUsersRepository'
 
 import prisma from '@shared/infra/prisma'
@@ -19,11 +20,11 @@ export class UsersRepository implements IUsersRepository {
     return userFiltred as User
   }
 
-  async verifyEmail (email: string): Promise<User | null> {
+  async verifyEmail (email: string, verify: boolean): Promise<User | null> {
     const userVerified = await prisma.person.update({
       where: { email },
       data: {
-        verified: true
+        verified: verify
       },
       select: {
         email: true,
@@ -39,6 +40,17 @@ export class UsersRepository implements IUsersRepository {
       data: { password: newPassword }
     })
 
+    return userUpdated as User
+  }
+
+  async update (data: IUpdateUserDTO): Promise<User> {
+    const { email } = data
+    const userUpdated = await prisma.person.update({
+      where: { email },
+      data: {
+        ...data
+      }
+    })
     return userUpdated as User
   }
 }
