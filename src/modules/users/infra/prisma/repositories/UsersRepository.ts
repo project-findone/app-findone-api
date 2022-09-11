@@ -52,4 +52,8 @@ export class UsersRepository implements IUsersRepository {
     })
     return userUpdated as User
   }
+
+  async delete (personID: number): Promise<void> {
+    await prisma.person.delete({ where: { personID } })
+  }
 }

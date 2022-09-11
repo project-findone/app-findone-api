@@ -8,4 +8,5 @@ export interface IUsersRepository{
   verifyEmail(email: string, verify: boolean): Promise<User | null>
   updatePass(email: string, newPassword: string): Promise<User>
   update(data: IUpdateUserDTO, personID: number): Promise<User>
+  delete(personID: number): Promise<void>
 }
