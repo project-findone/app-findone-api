@@ -8,44 +8,44 @@ datasource db {
 }
 
 model Person {
-  person_id                   Int              @id @default(autoincrement()) @map("TB_PESSOA_ID")
-  personType_id               Int              @map("TB_PESSOA_TIPO_ID_FK")
+  personID                    Int              @id @default(autoincrement()) @map("TB_PESSOA_ID")
+  personTypeID                Int              @map("TB_PESSOA_TIPO_ID_FK")
   name                        String           @db.VarChar(64) @map("TB_PESSOA_NOME")
   lastname                    String           @db.VarChar(64) @map("TB_PESSOA_SOBRENOME")
-  birth_date                  DateTime?        @db.Date @map("TB_PESSOA_DATA_NASC")
+  birthDate                   DateTime?        @db.Date @map("TB_PESSOA_DATA_NASC")
   personCPF                   String?          @map("TB_PESSOA_CPF")
   age                         Int?             @map("TB_PESSOA_IDADE")
   gender                      String?          @db.VarChar(16) @map("TB_PESSOA_SEXO")
   email                       String?          @unique @db.VarChar(128) @map("TB_PESSOA_EMAIL")
   verified                    Boolean          @default(false) @map("TB_PESSOA_VERIFICADO")
   password                    String?          @db.VarChar(64) @map("TB_PESSOA_SENHA")
-  phone_number                String?          @db.VarChar(16) @map("TB_PESSOA_TEL")
+  phoneNumber                 String?          @db.VarChar(16) @map("TB_PESSOA_TEL")
   personCEP                   String           @map("TB_PESSOA_CEP")
-  state_id                    Int              @map("TB_PESSOA_ESTADO_ID_FK")
+  stateID                     Int              @map("TB_PESSOA_ESTADO_ID_FK")
   city                        String           @db.VarChar(64) @map("TB_PESSOA_CIDADE")
-  person_biografy             String?          @db.VarChar(256) @map("TB_PESSOA_BIO")
+  personBiografy              String?          @db.VarChar(256) @map("TB_PESSOA_BIO")
   score                       Int?             @db.UnsignedInt @map("TB_PESSOA_PONTOS")
-  owner_id                    Int?             @map("TB_PESSOA_RESPONSAVEL_FK")
-  person_deficiency           String?          @db.VarChar(128) @map("TB_PESSOA_DEFICIENCIA")
-  person_kinship              String?          @db.VarChar(16) @map("TB_PESSOA_PARENTESCO")
-  person_image                String?          @map("TB_PESSOA_IMAGEM")
-  personType                  PersonType       @relation(fields: [personType_id], references: [personType_id], onDelete: NoAction, onUpdate: NoAction, map: "TB_PESSOA_ID_TB_PESSOA_TIPO_FK")
-  state                       State            @relation(fields: [state_id], references: [state_id], onDelete: NoAction, onUpdate: NoAction, map: "TB_PESSOA_ID_TB_ESTADO_FK")
+  ownerID                     Int?             @map("TB_PESSOA_RESPONSAVEL_FK")
+  personDeficiency            String?          @db.VarChar(128) @map("TB_PESSOA_DEFICIENCIA")
+  personKinship               String?          @db.VarChar(16) @map("TB_PESSOA_PARENTESCO")
+  personImage                 String?          @map("TB_PESSOA_IMAGEM")
+  personType                  PersonType       @relation(fields: [personTypeID], references: [personTypeID], onDelete: NoAction, onUpdate: NoAction, map: "TB_PESSOA_ID_TB_PESSOA_TIPO_FK")
+  state                       State            @relation(fields: [stateID], references: [stateID], onDelete: NoAction, onUpdate: NoAction, map: "TB_PESSOA_ID_TB_ESTADO_FK")
 
-  @@index([personType_id], map: "TB_PESSOA_TIPO_ID_FK")
+  @@index([personTypeID], map: "TB_PESSOA_TIPO_ID_FK")
   @@map("TB_PESSOA")
 }
 
 model PersonType {
-  personType_id       Int         @id @default(autoincrement()) @map("TB_PESSOA_TIPO_ID")
-  personType_name     String      @unique(map: "TB_PESSOA_TIPO_NOME") @db.VarChar(16) @map("TB_PESSOA_TIPO_NOME")
+  personTypeID       Int         @id @default(autoincrement()) @map("TB_PESSOA_TIPO_ID")
+  personTypeName     String      @unique(map: "TB_PESSOA_TIPO_NOME") @db.VarChar(16) @map("TB_PESSOA_TIPO_NOME")
   person              Person[]
   @@map("TB_PESSOA_TIPO")
 }
 
 model State {
-  state_id      Int       @id @default(autoincrement()) @map("TB_ESTADO_ID")
-  state_name    String    @unique(map: "TB_ESTADO_NOME") @db.Char(2) @map("TB_ESTADO_NOME")
+  stateID      Int       @id @default(autoincrement()) @map("TB_ESTADO_ID")
+  stateName    String    @unique(map: "TB_ESTADO_NOME") @db.Char(2) @map("TB_ESTADO_NOME")
   person        Person[]
   @@map("TB_ESTADO")
 }

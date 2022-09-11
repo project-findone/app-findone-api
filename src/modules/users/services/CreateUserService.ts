@@ -4,7 +4,7 @@ import { IUsersRepository } from '../repositories/IUsersRepository'
 import { inject, injectable } from 'tsyringe'
 import { hash } from 'bcrypt'
 
-import { userSchema } from '../infra/helpers/UserValidationSchema'
+import { createUserSchema } from '../infra/helpers/CreateUserValidationSchema'
 
 @injectable()
 class CreateUserService {
@@ -16,7 +16,7 @@ class CreateUserService {
   public async handle (request: ICreateUserDTO): Promise<User | undefined | {}> {
     const { email, password } = request
 
-    const { error } = userSchema.validate(request)
+    const { error } = createUserSchema.validate(request)
 
     if (error !== undefined) {
       throw new Error(`Alguns parâmetros estão ausentes' ${String(error)}`)

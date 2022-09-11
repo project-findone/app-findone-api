@@ -1,18 +1,18 @@
 
 export interface ICreateUserDTO {
-  personType_id: number
+  personTypeID: number
   name: string
   lastname: string
-  birth_date: Date
+  birthDate: Date
   personCPF: string
   gender: string
   email: string
   password: string
-  phone_number: string
+  phoneNumber: string
   personCEP: string
-  state_id: number
+  stateID: number
   city: string
   score: 0
-  person_biografy: string | null
-  person_image: string | null
+  personBiografy: string | null
+  personImage: string | null
 }

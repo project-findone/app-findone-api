@@ -1,32 +1,32 @@
-import { IUsersRepository } from '@modules/users/repositories/IUsersRepository'
+import { VerifyUserService } from '@modules/users/services/VerifyUserService'
 import { NextFunction, Request, Response } from 'express'
-import { inject, injectable } from 'tsyringe'
+import { container } from 'tsyringe'
+import { User } from '../../prisma/entities/User'
 
-@injectable()
-export class EnsureVerified {
-  constructor (
-    @inject('UsersRepository')
-    private userRepository: IUsersRepository
-  ) {}
+export async function ensureVerified (
+  request: Request,
+  response: Response,
+  next: NextFunction
+): Promise<void> {
+  const { email } = request.body
 
-  public handle (
-    request: Request,
-    response: Response,
-    next: NextFunction
-  ): void {
-    const { email } = request.body
+  if (!email) {
+    throw new Error('O e-mail não foi informado.')
+  }
 
-    if (!email) {
-      throw new Error('O e-mail não foi informado.')
-    }
+  const verifyUserService = container.resolve(VerifyUserService)
 
-    this.userRepository.findByEmail(email).then(user => {
-      if (user?.verified) {
-        next()
-      }
-      throw new Error('O e-mail deve estar verificado para realizar o login.')
-    }).catch(() => {
-      throw new Error('O e-mail não existe.')
-    })
+  const user = await verifyUserService.handle({ email }, true)
+
+  if (!user) {
+    throw new Error('Ocorreu um erro ao verificar o usuário.')
+  }
+
+  const { verified } = user
+
+  if (verified) {
+    return next()
+  } else {
+    throw new Error('O usuário precisa ser verificado para realizar o login.')
   }
 }

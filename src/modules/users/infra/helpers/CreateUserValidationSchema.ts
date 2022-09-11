@@ -1,19 +1,19 @@
 import joi from 'joi'
 
-export const userSchema = joi.object({
+export const createUserSchema = joi.object({
   name: joi.string().alphanum().max(64).required(),
   lastname: joi.string().alphanum().max(64).required(),
-  birth_date: joi.date().required(),
+  birthDate: joi.date().required(),
   personCPF: joi.string().required(),
   gender: joi.string().required(),
   email: joi.string().required(),
   password: joi.string().required(),
-  phone_number: joi.string().required(),
+  phoneNumber: joi.string().required(),
   personCEP: joi.string().required(),
-  state_id: joi.number().required(),
-  personType_id: joi.number().required(),
+  stateID: joi.number().required(),
+  personTypeID: joi.number().required(),
   city: joi.string().required(),
   score: joi.number(),
-  person_biografy: joi.string(),
-  person_image: joi.string()
+  personBiografy: joi.string(),
+  personImage: joi.string()
 })

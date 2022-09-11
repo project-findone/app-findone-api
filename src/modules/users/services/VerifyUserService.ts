@@ -6,6 +6,10 @@ interface IRequest{
   email: string | undefined | null
 }
 
+interface IVerified{
+  verified: boolean
+}
+
 @injectable()
 export class VerifyUserService {
   constructor (
@@ -13,7 +17,7 @@ export class VerifyUserService {
     private userRepository: IUsersRepository
   ) {}
 
-  public async handle (request: IRequest): Promise<User | null> {
+  public async handle (request: IRequest, isMiddlewareCall?: boolean): Promise<User | null | {} | IVerified> {
     const { email } = request
 
     if (!email) {
@@ -26,11 +30,15 @@ export class VerifyUserService {
       throw new Error('O e-mail informado não existe.')
     }
 
+    if (isMiddlewareCall) {
+      return user
+    }
+
     if (user.verified) {
       throw new Error('O e-mail já é verificado.')
     }
 
-    const userVerified = await this.userRepository.verifyEmail(email)
+    const userVerified = await this.userRepository.verifyEmail(email, true)
 
     return userVerified
   }

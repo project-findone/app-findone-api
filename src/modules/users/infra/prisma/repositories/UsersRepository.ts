@@ -43,10 +43,9 @@ export class UsersRepository implements IUsersRepository {
     return userUpdated as User
   }
 
-  async update (data: IUpdateUserDTO): Promise<User> {
-    const { email } = data
+  async update (data: IUpdateUserDTO, personID: number): Promise<User> {
     const userUpdated = await prisma.person.update({
-      where: { email },
+      where: { personID },
       data: {
         ...data
       }
