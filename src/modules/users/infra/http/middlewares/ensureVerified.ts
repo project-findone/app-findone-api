@@ -16,7 +16,7 @@ export async function ensureVerified (
 
   const verifyUserService = container.resolve(VerifyUserService)
 
-  const user = await verifyUserService.handle({ email }, true)
+  const user = await verifyUserService.handle({ email }, true) as User
 
   if (!user) {
     throw new Error('Ocorreu um erro ao verificar o usuário.')

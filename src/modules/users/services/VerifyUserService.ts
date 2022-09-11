@@ -6,10 +6,6 @@ interface IRequest{
   email: string | undefined | null
 }
 
-interface IVerified{
-  verified: boolean
-}
-
 @injectable()
 export class VerifyUserService {
   constructor (
@@ -17,7 +13,7 @@ export class VerifyUserService {
     private userRepository: IUsersRepository
   ) {}
 
-  public async handle (request: IRequest, isMiddlewareCall?: boolean): Promise<User | null | {} | IVerified> {
+  public async handle (request: IRequest, isMiddlewareCall?: boolean): Promise<User | null> {
     const { email } = request
 
     if (!email) {
