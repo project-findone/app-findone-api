@@ -1,26 +1,26 @@
 import { Person } from '@prisma/client'
 
 export class PersonEntity implements Person {
-  public person_id!: number
-  public personType_id!: number
+  public personID!: number
+  public personTypeID!: number
   public name!: string
   public lastname!: string
-  public birth_date!: Date | null
+  public birthDate!: Date | null
   public personCPF!: string | null
   public age!: number | null
   public gender!: string | null
   public email!: string | null
   public password!: string | null
-  public phone_number!: string | null
+  public phoneNumber!: string | null
   public personCEP!: string
-  public state_id!: number
+  public stateID!: number
   public city!: string
-  public person_biografy!: string | null
+  public personBiografy!: string | null
   public score!: number | null
-  public owner_id!: number | null
-  public person_deficiency!: string | null
-  public person_kinship!: string | null
-  public person_image!: string | null
+  public ownerID!: number | null
+  public personDeficiency!: string | null
+  public personKinship!: string | null
+  public personImage!: string | null
   public verified!: boolean
 
   constructor (props: PersonEntity) {

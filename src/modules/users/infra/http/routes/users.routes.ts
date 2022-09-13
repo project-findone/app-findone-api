@@ -1,11 +1,17 @@
 import { container } from 'tsyringe'
 import { Router } from 'express'
 
+import multer from 'multer'
+import uploadConfig from 'config/Upload'
+
 import CreateUserService from '@modules/users/services/CreateUserService'
 import UpdateUserService from '@modules/users/services/UpdateUserService'
 import DeleteUserService from '@modules/users/services/DeleteUserService'
+import UpdateUserImageService from '@modules/users/services/UpdateUserImageService'
 
 import { ensureAuthenticated } from '../middlewares/ensureAuthenticated'
+
+const upload = multer(uploadConfig)
 
 const usersRouter = Router()
 
@@ -21,6 +27,17 @@ usersRouter.put('/', ensureAuthenticated, async (request, response) => {
   const personID = Number(request.user.id)
   const user = await updateUserService.handle(request.body, personID)
   return response.json({ message: user })
+})
+
+usersRouter.patch('/', ensureAuthenticated, upload.single('image'), async (request, response) => {
+  if (request.file) {
+    const updateUserImageService = container.resolve(UpdateUserImageService)
+    const personID = Number(request.user.id)
+    const fileName = request.file?.filename
+    const user = await updateUserImageService.handle({ personID, fileName })
+    return response.json({ message: user })
+  }
+  return response.json({ messge: 'Não é um tipo de arquivo válido' })
 })
 
 usersRouter.delete('/', ensureAuthenticated, async (request, response) => {

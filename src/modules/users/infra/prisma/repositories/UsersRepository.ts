@@ -20,6 +20,11 @@ export class UsersRepository implements IUsersRepository {
     return userFiltred as User
   }
 
+  async findByID (personID: number): Promise<User> {
+    const userFiltred = await prisma.person.findUnique({ where: { personID } })
+    return userFiltred as User
+  }
+
   async verifyEmail (email: string, verify: boolean): Promise<User | null> {
     const userVerified = await prisma.person.update({
       where: { email },
@@ -49,6 +54,14 @@ export class UsersRepository implements IUsersRepository {
       data: {
         ...data
       }
+    })
+    return userUpdated as User
+  }
+
+  async updateImage (image: string, personID: number): Promise<User> {
+    const userUpdated = await prisma.person.update({
+      where: { personID },
+      data: { personImage: image }
     })
     return userUpdated as User
   }
