@@ -4,12 +4,12 @@ const prisma = new PrismaClient()
 async function main (): Promise<void> {
   await prisma.personType.create({
     data: {
-      personType_name: 'Usuário'
+      personTypeName: 'Usuário'
     }
   })
   await prisma.state.create({
     data: {
-      state_name: 'SP'
+      stateName: 'SP'
     }
   })
 }

@@ -17,16 +17,17 @@ const usersRouter = Router()
 
 usersRouter.post('/', async (request, response) => {
   const createUserService = container.resolve(CreateUserService)
-  console.log(request.body)
+  const { birthDate } = request.body
+  request.body.birthDate = new Date(birthDate)
   const user = await createUserService.handle(request.body)
-  return response.json({ message: user })
+  return response.json({ user })
 })
 
 usersRouter.put('/', ensureAuthenticated, async (request, response) => {
   const updateUserService = container.resolve(UpdateUserService)
   const personID = Number(request.user.id)
   const user = await updateUserService.handle(request.body, personID)
-  return response.json({ message: user })
+  return response.json({ user })
 })
 
 usersRouter.patch('/', ensureAuthenticated, upload.single('image'), async (request, response) => {
@@ -37,7 +38,7 @@ usersRouter.patch('/', ensureAuthenticated, upload.single('image'), async (reque
     const user = await updateUserImageService.handle({ personID, fileName })
     return response.json({ message: user })
   }
-  return response.json({ messge: 'Não é um tipo de arquivo válido' })
+  return response.json({ message: 'Não é um tipo de arquivo válido' })
 })
 
 usersRouter.delete('/', ensureAuthenticated, async (request, response) => {

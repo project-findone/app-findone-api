@@ -9,7 +9,7 @@ const sessionsRouter = Router()
 sessionsRouter.post('/', ensureVerified, async (request, response) => {
   const authUserService = container.resolve(AuthenticateUserService)
   const user = await authUserService.handle(request.body)
-  return response.json({ message: user })
+  return response.json({ user })
 })
 
 export default sessionsRouter
