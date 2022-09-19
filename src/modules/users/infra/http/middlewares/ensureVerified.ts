@@ -23,7 +23,7 @@ export const ensureVerified = asyncMiddleware(async (
   const user = await verifyUserService.handle({ email }, true) as User
 
   if (!user) {
-    throw new AppError('Ocorreu um erro ao verificar o usuário.', 500)
+    next(new AppError('Ocorreu um erro ao verificar o usuário.', 400))
   }
 
   const { verified } = user
