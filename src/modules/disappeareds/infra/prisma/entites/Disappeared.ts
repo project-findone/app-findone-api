@@ -1,6 +1,6 @@
 import { Person } from '@prisma/client'
 
-export class User implements Person {
+export class Disappeared implements Person {
   public personID!: number
   public personTypeID!: number
   public name!: string
@@ -9,22 +9,22 @@ export class User implements Person {
   public personCPF!: string
   public age!: number | null
   public gender!: string
-  public email!: string
-  public password!: string
-  public phoneNumber!: string
+  public email!: string | null
+  public password!: string | null
+  public phoneNumber!: string | null
   public personCEP!: string
   public stateID!: number
   public city!: string
   public personBiografy!: string | null
   public score!: number | null
-  public ownerID!: number | null
-  public personDeficiency!: string | null
-  public personKinship!: string | null
+  public ownerID!: number
+  public personDeficiency!: string
+  public personKinship!: string
   public personImage!: string | null
-  public characteristics!: string | null
+  public characteristics!: string
   public verified!: boolean
 
-  constructor (props: User) {
+  constructor (props: Disappeared) {
     Object.assign(this, props)
   }
 }
