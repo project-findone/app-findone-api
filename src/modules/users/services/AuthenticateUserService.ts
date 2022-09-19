@@ -1,4 +1,3 @@
-
 import { User } from '@modules/users/infra/prisma/entities/User'
 import { IUsersRepository } from '@modules/users/repositories/IUsersRepository'
 import { inject, injectable } from 'tsyringe'
@@ -6,6 +5,7 @@ import { compare } from 'bcrypt'
 import { sign } from 'jsonwebtoken'
 
 import AuthConfig from '@config/auth'
+import { AppError } from '@shared/error/AppError'
 
 interface Request{
   email: string
@@ -30,13 +30,13 @@ export class AuthenticateUserService {
     const user = await this.usersRepository.findByEmail(email)
 
     if (!user) {
-      throw new Error('O e-mail informado não existe.')
+      throw new AppError('O e-mail informado não existe.', 404)
     }
 
     const passMatched = await compare(password, user.password)
 
     if (!passMatched) {
-      throw new Error('Os parâmetros email/senha não coincidem.')
+      throw new AppError('Os parâmetros email/senha não coincidem.', 401)
     }
 
     try {
@@ -52,7 +52,7 @@ export class AuthenticateUserService {
         token
       }
     } catch {
-      throw new Error('O JWTSecret não foi encontrado.')
+      throw new AppError('O JWTSecret não foi encontrado.', 500)
     }
   }
 }
