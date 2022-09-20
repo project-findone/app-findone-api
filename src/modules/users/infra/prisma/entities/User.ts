@@ -21,6 +21,7 @@ export class User implements Person {
   public personDeficiency!: string | null
   public personKinship!: string | null
   public personImage!: string | null
+  public characteristics!: string | null
   public verified!: boolean
 
   constructor (props: User) {

@@ -1,17 +1,21 @@
-import { VerifyUserService } from '@modules/users/services/VerifyUserService'
 import { NextFunction, Request, Response } from 'express'
 import { container } from 'tsyringe'
+import { asyncMiddleware } from 'middleware-async'
+
+import { AppError } from '@shared/error/AppError'
+
+import { VerifyUserService } from '@modules/users/services/VerifyUserService'
 import { User } from '../../prisma/entities/User'
 
-export async function ensureVerified (
+export const ensureVerified = asyncMiddleware(async (
   request: Request,
   response: Response,
   next: NextFunction
-): Promise<void> {
+): Promise<void> => {
   const { email } = request.body
 
   if (!email) {
-    throw new Error('O e-mail não foi informado.')
+    next(new AppError('O e-mail não foi informado.', 404))
   }
 
   const verifyUserService = container.resolve(VerifyUserService)
@@ -19,7 +23,7 @@ export async function ensureVerified (
   const user = await verifyUserService.handle({ email }, true) as User
 
   if (!user) {
-    throw new Error('Ocorreu um erro ao verificar o usuário.')
+    next(new AppError('Ocorreu um erro ao verificar o usuário.', 400))
   }
 
   const { verified } = user
@@ -27,6 +31,6 @@ export async function ensureVerified (
   if (verified) {
     return next()
   } else {
-    throw new Error('O usuário precisa ser verificado para realizar o login.')
+    throw new AppError('O usuário precisa ser verificado para realizar o login.', 401)
   }
-}
+})
