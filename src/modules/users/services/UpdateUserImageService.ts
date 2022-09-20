@@ -1,10 +1,7 @@
 import { inject, injectable } from 'tsyringe'
 import { User } from '../infra/prisma/entities/User'
 import { IUsersRepository } from '../repositories/IUsersRepository'
-import uploadConfig from 'config/Upload'
-
-import path from 'path'
-import fs from 'fs'
+import IStorageProvider from '@shared/container/providers/StorageProvider/Models/IStorageProvider'
 
 interface IRequest {
   fileName: string | undefined
@@ -15,23 +12,22 @@ interface IRequest {
 export class UpdateUserImageService {
   constructor (
     @inject('UsersRepository')
-    private userRepository: IUsersRepository
+    private userRepository: IUsersRepository,
+
+    @inject('StorageProvider')
+    private storageProvider: IStorageProvider
   ) {}
 
   public async handle ({ personID, fileName }: IRequest): Promise<User | undefined | {}> {
     const { personImage } = await this.userRepository.findByID(personID)
 
     if (personImage) {
-      const userImageFilePath = path.join(uploadConfig.directory, personImage)
-      const userImageFileExists = await fs.promises.stat(userImageFilePath)
-
-      if (userImageFileExists) {
-        await fs.promises.unlink(userImageFilePath)
-      }
+      await this.storageProvider.deleteFile(personImage)
     }
 
     if (fileName) {
-      const user = await this.userRepository.updateImage(fileName, personID)
+      const newFileName = await this.storageProvider.saveFile(fileName)
+      const user = await this.userRepository.updateImage(newFileName, personID)
       return { message: user }
     }
 

@@ -1,0 +1,26 @@
+import fs from 'fs'
+import path from 'path'
+import { storage } from '@config/firebase'
+import { ref, uploadBytes, deleteObject } from 'firebase/storage'
+import uploadConfig from '@config/Upload'
+import IStorageProvider from '../Models/IStorageProvider'
+
+class FireBaseStorageProvider implements IStorageProvider {
+  public async saveFile (file: string): Promise<string> {
+    const originalPath = path.resolve(uploadConfig.tmpFolder, file)
+    const fileContent = await fs.promises.readFile(originalPath)
+
+    const storageRef = ref(storage, `images/${file}`)
+    const uploadTask = uploadBytes(storageRef, fileContent)
+
+    await fs.promises.unlink(originalPath)
+
+    return file
+  }
+
+  public async deleteFile (file: string): Promise<void> {
+    const storageRef = ref(storage, `images/${file}`)
+    const uploadTask = deleteObject(storageRef)
+  }
+}
+export default FireBaseStorageProvider

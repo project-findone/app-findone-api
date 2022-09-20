@@ -11,7 +11,7 @@ import UpdateUserImageService from '@modules/users/services/UpdateUserImageServi
 
 import { ensureAuthenticated } from '../middlewares/ensureAuthenticated'
 
-const upload = multer(uploadConfig)
+const upload = multer(uploadConfig.multer)
 
 const usersRouter = Router()
 
