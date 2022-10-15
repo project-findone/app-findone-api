@@ -1,0 +1,26 @@
+
+                Filtragem de dados do desaparecido
+    
+    - Dados de peso: 
+
+        Definidos:
+            - Nome e Sobrenome
+            - CPF 
+
+        Indefinidos:
+            - Estado e Cidade
+
+        - Características:
+            - Cor da pele
+            - Cor dos olhos
+            - Tipo de cabelo
+            - Cor do cabelo
+            - Sexo
+
+    - Definir precisão da filtragem:
+
+        - Requisição para consulta de dados altamente definidos (Nome, Sobrenome e CPF)
+
+        - Requisição para consulta de dados parcialmente definidos (Sexo, Cor da Pele, Cor dos Olhos, Estado e Cidade)
+
+        - Requisição para consulta de dados indefinidos (Tipo de Cabelo e Cor do Cabelo)

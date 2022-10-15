@@ -7,14 +7,15 @@ import { Request } from 'express'
 const tmpFolder = path.resolve(__dirname, '..', '..', 'tmp')
 const uploadsFolder = path.resolve(__dirname, '..', '..', 'tmp', 'uploads')
 
-function fileFilter () {
+function fileFilter (filter: 'image' | 'doc') {
   return (
     req: Request,
     file: Express.Multer.File,
     cb: multer.FileFilterCallback
   ) => {
     const type = String(mime.extension(file.mimetype))
-    const conditions = ['png', 'jpg', 'jpeg']
+    const conditions = filter !== 'image' ? ['pdf', 'docx'] : ['jpg', 'jpeg', 'png']
+
     if (conditions.includes(`${type}`)) {
       cb(null, true)
     }
@@ -29,8 +30,14 @@ interface IUploadConfig {
   uploadsFolder: string
 
   multer: {
-    storage: StorageEngine
-    fileFilter: (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => void
+    images: {
+      storage: StorageEngine
+      fileFilter: (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => void
+    }
+    docs: {
+      storage: StorageEngine
+      fileFilter: (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => void
+    }
   }
 
   config: {
@@ -45,16 +52,30 @@ export default {
   uploadsFolder,
 
   multer: {
-    storage: multer.diskStorage({
-      destination: tmpFolder,
-      filename: (request, file, callback) => {
-        const fileHash = crypto.randomBytes(10).toString('hex')
-        const fileName = `${fileHash}-${file.originalname}`
+    images: {
+      storage: multer.diskStorage({
+        destination: tmpFolder,
+        filename: (request, file, callback) => {
+          const fileHash = crypto.randomBytes(10).toString('hex')
+          const fileName = `${fileHash}-${file.originalname}`
 
-        return callback(null, fileName)
-      }
-    }),
-    fileFilter: fileFilter()
+          return callback(null, fileName)
+        }
+      }),
+      fileFilter: fileFilter('image')
+    },
+    docs: {
+      storage: multer.diskStorage({
+        destination: tmpFolder,
+        filename: (request, file, callback) => {
+          const fileHash = crypto.randomBytes(10).toString('hex')
+          const fileName = `${fileHash}-${file.originalname}`
+
+          return callback(null, fileName)
+        }
+      }),
+      fileFilter: fileFilter('doc')
+    }
   },
 
   config: {

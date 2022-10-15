@@ -13,7 +13,7 @@ export class Disappeared implements Person {
   public password!: string | null
   public phoneNumber!: string | null
   public personCEP!: string
-  public stateID!: number
+  public state!: string
   public city!: string
   public personBiografy!: string | null
   public score!: number | null
@@ -21,7 +21,7 @@ export class Disappeared implements Person {
   public personDeficiency!: string
   public personKinship!: string
   public personImage!: string | null
-  public characteristics!: string
+  public description!: string
   public verified!: boolean
 
   constructor (props: Disappeared) {

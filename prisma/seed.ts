@@ -2,94 +2,60 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main (): Promise<void> {
-  await prisma.personType.create({
-    data: {
-      personTypeName: 'Usuário'
-    }
+  await prisma.personType.createMany({
+    data: [
+      { personTypeName: 'Usuário' },
+      { personTypeName: 'Desaparecido' },
+      { personTypeName: 'Sumido' },
+      { personTypeName: 'Apoiador' }
+    ]
   })
-  await prisma.personType.create({
-    data: {
-      personTypeName: 'Desaparecido'
-    }
+  await prisma.characteristicType.createMany({
+    data: [
+      { characteristicTypeName: 'Cor dos olhos' },
+      { characteristicTypeName: 'Cor da pele' },
+      { characteristicTypeName: 'Cor do cabelo' },
+      { characteristicTypeName: 'Tipo do cabelo' }
+    ]
   })
-  await prisma.state.create({
-    data: {
-      stateName: 'SP'
-    }
+  await prisma.characteristic.createMany({
+    data: [
+      { characteristicTypeName: 'Cor dos olhos', characteristicName: 'Azul' },
+      { characteristicTypeName: 'Cor dos olhos', characteristicName: 'Verde' },
+      { characteristicTypeName: 'Cor dos olhos', characteristicName: 'Castanho' },
+
+      { characteristicTypeName: 'Cor da pele', characteristicName: 'Branca' },
+      { characteristicTypeName: 'Cor da pele', characteristicName: 'Preta' },
+      { characteristicTypeName: 'Cor da pele', characteristicName: 'Parda' },
+
+      { characteristicTypeName: 'Cor do cabelo', characteristicName: 'Loiro' },
+      { characteristicTypeName: 'Cor do cabelo', characteristicName: 'Preto' },
+      { characteristicTypeName: 'Cor do cabelo', characteristicName: 'Castanho' },
+
+      { characteristicTypeName: 'Tipo do cabelo', characteristicName: 'Liso' },
+      { characteristicTypeName: 'Tipo do cabelo', characteristicName: 'Cacheados' },
+      { characteristicTypeName: 'Tipo do cabelo', characteristicName: 'Crespos' }
+    ]
   })
-  await prisma.state.create({
-    data: {
-      stateName: 'SP'
-    }
+  await prisma.caseType.createMany({
+    data: [
+      { caseTypeName: 'Desaparecido' },
+      { caseTypeName: 'Sumido' }
+    ]
   })
-  await prisma.characteristicType.create({
-    data: {
-      characteristicTypeName: 'Cor dos olhos'
-    }
+  await prisma.caseStatus.createMany({
+    data: [
+      { caseStatusName: 'Ativo' },
+      { caseStatusName: 'Arquivado' },
+      { caseStatusName: 'Finalizado' }
+    ]
   })
-  await prisma.characteristicType.create({
-    data: {
-      characteristicTypeName: 'Cor da pele'
-    }
-  })
-  await prisma.characteristicType.create({
-    data: {
-      characteristicTypeName: 'Cor do cabelo'
-    }
-  })
-  await prisma.characteristic.create({
-    data: {
-      characteristicTypeID: 1,
-      characteristicName: 'Azul'
-    }
-  })
-  await prisma.characteristic.create({
-    data: {
-      characteristicTypeID: 1,
-      characteristicName: 'Verde'
-    }
-  })
-  await prisma.characteristic.create({
-    data: {
-      characteristicTypeID: 1,
-      characteristicName: 'Castanho'
-    }
-  })
-  await prisma.characteristic.create({
-    data: {
-      characteristicTypeID: 2,
-      characteristicName: 'Branca'
-    }
-  })
-  await prisma.characteristic.create({
-    data: {
-      characteristicTypeID: 2,
-      characteristicName: 'Preta'
-    }
-  })
-  await prisma.characteristic.create({
-    data: {
-      characteristicTypeID: 2,
-      characteristicName: 'Parda'
-    }
-  })
-  await prisma.characteristic.create({
-    data: {
-      characteristicTypeID: 3,
-      characteristicName: 'Loiro'
-    }
-  })
-  await prisma.characteristic.create({
-    data: {
-      characteristicTypeID: 3,
-      characteristicName: 'Preto'
-    }
-  })
-  await prisma.characteristic.create({
-    data: {
-      characteristicTypeID: 3,
-      characteristicName: 'Castanho'
-    }
+  await prisma.category.createMany({
+    data: [
+      { categoryName: 'Fotos' },
+      { categoryName: 'Documentos' },
+      { categoryName: 'Personalizado' }
+    ]
   })
 }
 

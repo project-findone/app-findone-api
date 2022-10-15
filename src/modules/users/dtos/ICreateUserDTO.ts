@@ -9,7 +9,7 @@ export interface ICreateUserDTO {
   password: string
   phoneNumber: string
   personCEP: string
-  stateID: number
+  state: string
   city: string
   score: 0
   personBiografy: string | null

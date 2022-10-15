@@ -2,6 +2,8 @@ import nodemailer, { Transporter } from 'nodemailer'
 import { IMailProvider } from '../Models/IMailProvider'
 import { ISendMailDTO } from '../Models/ISendMailDTO'
 
+import { AppError } from '@shared/error/AppError'
+
 export class EtherealMailProvider implements IMailProvider {
   private client!: Transporter
 
@@ -32,7 +34,7 @@ export class EtherealMailProvider implements IMailProvider {
       subject: 'Código de Verificação - FindOne',
       text: `Verifique a sua conta para ter acesso à plataforma FindOne! 
       \n \nCódigo de verificação: ${body}`
-    }).catch(() => { throw new Error('O e-mail informado é inválido.') })
+    }).catch(() => { throw new AppError('O e-mail informado é inválido.', 400) })
 
     console.log('Message sent: %s', message.messageId)
     // Preview only available when sending through an Ethereal account

@@ -18,22 +18,27 @@ model Person {
   gender                      String?          @db.VarChar(16) @map("TB_PESSOA_SEXO")
   email                       String?          @unique @db.VarChar(128) @map("TB_PESSOA_EMAIL")
   verified                    Boolean          @default(false) @map("TB_PESSOA_VERIFICADO")
+  disabled                    Boolean          @default(false) @map("TB_PESSOA_DESATIVADO")
   password                    String?          @db.VarChar(64) @map("TB_PESSOA_SENHA")
   phoneNumber                 String?          @db.VarChar(16) @map("TB_PESSOA_TEL")
   personCEP                   String           @map("TB_PESSOA_CEP")
-  stateID                     Int              @map("TB_PESSOA_ESTADO_ID_FK")
+  state                       String           @db.Char(2)@map("TB_PESSOA_ESTADO")
   city                        String           @db.VarChar(64) @map("TB_PESSOA_CIDADE")
   personBiografy              String?          @db.VarChar(256) @map("TB_PESSOA_BIO")
   score                       Int?             @db.UnsignedInt @map("TB_PESSOA_PONTOS")
-  ownerID                     Int?             @map("TB_PESSOA_RESPONSAVEL_FK")
   personDeficiency            String?          @db.VarChar(128) @map("TB_PESSOA_DEFICIENCIA")
   personKinship               String?          @db.VarChar(16) @map("TB_PESSOA_PARENTESCO")
   personImage                 String?          @map("TB_PESSOA_IMAGEM")
-  characteristics             String?          @map("TB_CARACTERISTICA_AD")
+  description                 String?          @map("TB_PESSOA_DESCRICAO")
+  ownerID                     Int?             @map("TB_PESSOA_RESPONSAVEL_FK")
+  login                       DateTime?        @map("TB_PESSOA_LOGIN")
+  logout                      DateTime?        @map("TB_PESSOA_LOGOUT")
+  owner                       Person?          @relation("UserOwner", fields: [ownerID], references: [personID], onDelete: NoAction, onUpdate: NoAction, map: "TB_PESSOA_ID_TB_PESSOA_RESPONSAVEL_FK")
+  person                      Person[]         @relation("UserOwner")
   personType                  PersonType       @relation(fields: [personTypeID], references: [personTypeID], onDelete: NoAction, onUpdate: NoAction, map: "TB_PESSOA_ID_TB_PESSOA_TIPO_FK")
-  state                       State            @relation(fields: [stateID], references: [stateID], onDelete: NoAction, onUpdate: NoAction, map: "TB_PESSOA_ID_TB_ESTADO_FK")
   disCharacteristic           DisCharacteristic[]
-
+  case                        Case[]
+  supportCase                 SupportCase[]
   @@index([personTypeID], map: "TB_PESSOA_TIPO_ID_FK")
   @@map("TB_PESSOA")
 }
@@ -45,26 +50,19 @@ model PersonType {
   @@map("TB_PESSOA_TIPO")
 }
 
-model State {
-  stateID      Int       @id @default(autoincrement()) @map("TB_ESTADO_ID")
-  stateName    String    @unique(map: "TB_ESTADO_NOME") @db.Char(2) @map("TB_ESTADO_NOME")
-  person        Person[]
-  @@map("TB_ESTADO")
-}
-
 model CharacteristicType {
-  characteristicTypeID      Int       @id @default(autoincrement()) @map("TB_CARACTERISTICA_TIPO_ID")
-  characteristicTypeName    String    @unique(map: "TB_CARACTERISTICA_TIPO_NOME") @db.VarChar(16) @map("TB_CARACTERISTICA_TIPO_NOME")
-  characteristic        Characteristic[]
+  characteristicTypeID      Int           @id @default(autoincrement()) @map("TB_CARACTERISTICA_TIPO_ID")
+  characteristicTypeName    String        @unique(map: "TB_CARACTERISTICA_TIPO_NOME") @db.VarChar(16) @map("TB_CARACTERISTICA_TIPO_NOME")
+  characteristic            Characteristic[]
   @@map("TB_CARACTERISTICA_TIPO")
 }
 
 model Characteristic {
-  characteristicID      Int                 @id @default(autoincrement()) @map("TB_CARACTERISTICA_ID")
-  characteristicName    String              @unique(map: "TB_CARACTERISTICA_NOME") @db.VarChar(16) @map("TB_CARACTERISTICA_NOME")
-  characteristicTypeID  Int                 @map("TB_CARACTERISTICA_TIPO_ID_FK")
-  characteristicType    CharacteristicType  @relation(fields: [characteristicTypeID], references: [characteristicTypeID], onDelete: NoAction, onUpdate: NoAction, map: "TB_CARACTERISTICA_ID_TB_CARACTERISTICA_TIPO_FK")
-  disCharacteristic     DisCharacteristic[]
+  characteristicID          Int                   @id @default(autoincrement()) @map("TB_CARACTERISTICA_ID")
+  characteristicName        String                @db.VarChar(16) @map("TB_CARACTERISTICA_NOME")
+  characteristicTypeName    String                @db.VarChar(16)@map("TB_CARACTERISTICA_TIPO_NOME_FK")
+  characteristicType        CharacteristicType    @relation(fields: [characteristicTypeName], references: [characteristicTypeName], onDelete: NoAction, onUpdate: NoAction, map: "TB_CARACTERISTICA_ID_TB_CARACTERISTICA_TIPO_FK")
+  disCharacteristic         DisCharacteristic[]
   @@map("TB_CARACTERISTICA")
 }
 
@@ -75,4 +73,90 @@ model DisCharacteristic {
   person                    Person          @relation(fields: [personID], references: [personID], onDelete: NoAction, onUpdate: NoAction, map: "TB_CARAC_DESA_ID_TB_PESSOA_FK")
   characteristic            Characteristic  @relation(fields: [characteristicID], references: [characteristicID], onDelete: NoAction, onUpdate: NoAction, map: "TB_CARAC_DESA_ID_TB_CARACTERISTICA_FK")
   @@map("TB_CARAC_DESA")
+}
+
+model Case {
+  caseID                  Int              @id @default(autoincrement()) @map("TB_CASO_ID")
+  caseTypeID              Int              @map("TB_CASO_TIPO_ID_FK")
+  caseStatusID            Int              @map("TB_CASO_STATUS_ID_FK")
+  personID                Int              @map("TB_CASO_PESSOA_ID_FK")
+  state                   String           @db.Char(2)@map("TB_CASO_ESTADO")
+  city                    String           @db.VarChar(64) @map("TB_CASO_CIDADE")
+  district                String?          @db.VarChar(64) @map("TB_CASO_BAIRRO")
+  street                  String?          @db.VarChar(64) @map("TB_CASO_RUA")
+  description             String           @db.VarChar(512) @map("TB_CASO_DESCRICAO")
+  dateStart               DateTime         @map("TB_CASO_DATA_INICIO")
+  dateEnd                 DateTime?        @map("TB_CASO_DATA_TERMINO")
+  dateArchive             DateTime?        @map("TB_CASO_DATA_ARQUIVACAO")
+  latitude                String           @map("TB_CASO_LATITUDE")
+  longitude               String           @map("TB_CASO_LONGITUDE")
+  caseType                CaseType         @relation(fields: [caseTypeID], references: [caseTypeID], onDelete: NoAction, onUpdate: NoAction, map: "TB_CASO_ID_TB_CASO_TIPO_FK")
+  caseStatus              CaseStatus       @relation(fields: [caseStatusID], references: [caseStatusID], onDelete: NoAction, onUpdate: NoAction, map: "TB_CASO_ID_TB_CASO_STATUS_FK")
+  person                  Person           @relation(fields: [personID], references: [personID], onDelete: NoAction, onUpdate: NoAction, map: "TB_CASO_ID_TB_PESSOA_FK")
+  supportCase             SupportCase[]
+  @@map("TB_CASO")
+}
+
+model CaseType {
+  caseTypeID              Int         @id @default(autoincrement()) @map("TB_CASO_TIPO_ID")
+  caseTypeName            String      @unique(map: "TB_CASO_TIPO_NOME") @db.VarChar(16) @map("TB_CASO_TIPO_NOME")
+  case                    Case[]
+  @@map("TB_CASO_TIPO")
+}
+
+model CaseStatus {
+  caseStatusID            Int         @id @default(autoincrement()) @map("TB_CASO_STATUS_ID")
+  caseStatusName          String      @unique(map: "TB_CASO_STATUS_NOME") @db.VarChar(16) @map("TB_CASO_STATUS_NOME")
+  case                    Case[]
+  @@map("TB_CASO_STATUS")
+}
+
+model SupportCase {
+  supportCaseID           Int           @id @default(autoincrement()) @map("TB_APOIA_CASO_ID")
+  personID                Int           @map("TB_PESSOA_ID_FK")
+  caseID                  Int           @map("TB_CASO_ID_FK")
+  dateEntry               DateTime      @map("TB_APOIA_CASO_DATA_ENTRADA")
+  dateExit                DateTime?     @map("TB_APOIA_CASO_DATA_SAIDA")
+  activity                DateTime?     @map("TB_APOIA_CASO_ATIVIDADE")
+  person                  Person        @relation(fields: [personID], references: [personID], onDelete: NoAction, onUpdate: NoAction, map: "TB_APOIA_CASO_ID_TB_PESSOA_FK")
+  case                    Case          @relation(fields: [caseID], references: [caseID], onDelete: NoAction, onUpdate: NoAction, map: "TB_APOIA_CASO_ID_TB_CASO_FK")
+  sessionChat             SessionChat[]
+  @@map("TB_APOIA_CASO")
+}
+
+model SessionChat {
+  sessionChatID            Int              @id @default(autoincrement()) @map("TB_SESSAO_CHAT_ID")
+  supportCaseID            Int              @map("TB_APOIA_CASO_ID_FK")
+  supportCase              SupportCase      @relation(fields: [supportCaseID], references: [supportCaseID], onDelete: NoAction, onUpdate: NoAction, map: "TB_SESSAO_CHAT_ID_TB_APOIA_CASO_FK")
+  contribution             Contribution[]
+  @@map("TB_SESSAO_CHAT")
+}
+
+model Category {
+  categoryID              Int             @id @default(autoincrement()) @map("TB_CATEGORIA_ID")
+  categoryName            String          @unique(map: "TB_CATEGORIA_NOME") @db.VarChar(16) @map("TB_CATEGORIA_NOME")
+  contribution            Contribution[]
+  @@map("TB_CATEGORIA")
+}
+
+model Contribution {
+  contributionID            Int          @id @default(autoincrement()) @map("TB_CONTRIBUICAO_ID")
+  sessionChatID             Int          @map("TB_SESSAO_CHAT_ID_FK")
+  categoryID                Int          @map("TB_CATEGORIA_ID_FK")
+  description               String       @db.VarChar(512) @map("TB_CONTRIBUICAO_DESCRICAO")
+  score                     Int?         @db.UnsignedInt @map("TB_CONTRIBUICAO_PONTOS")
+  dateTimeSend              DateTime     @map("TB_CONTRIBUICAO_DATA_HORA_ENVIO")
+  issuer                    Int          @map("TB_CONTRIBUICAO_EMISSOR")
+  category                  Category     @relation(fields: [categoryID], references: [categoryID], onDelete: NoAction, onUpdate: NoAction, map: "TB_CONTRIBUICAO_ID_TB_CATEGORIA_FK")
+  sessionChat               SessionChat  @relation(fields: [sessionChatID], references: [sessionChatID], onDelete: NoAction, onUpdate: NoAction, map: "TB_CONTRIBUICAO_ID_TB_SESSAO_CHAT_FK")
+  attachment                Attachment[]
+  @@map("TB_CONTRIBUICAO")
+}
+
+model Attachment {
+  attachmentID            Int            @id @default(autoincrement()) @map("TB_ANEXO_ID")
+  attachmentName          String         @db.VarChar(64) @map("TB_ANEXO_NOME")
+  contributionID          Int            @map("TB_CONTRIBUICAO_ID_FK")
+  contribution            Contribution   @relation(fields: [contributionID], references: [contributionID], onDelete: NoAction, onUpdate: NoAction, map: "TB_ANEXO_ID_TB_CONTRIBUICAO_FK")
+  @@map("TB_ANEXO")
 }

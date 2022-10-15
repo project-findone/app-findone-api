@@ -5,6 +5,8 @@ import { IUsersRepository } from '../repositories/IUsersRepository'
 import { hash } from 'bcrypt'
 import { updateUserSchema } from '../infra/helpers/UpdateUserValidationSchema'
 
+import { AppError } from '@shared/error/AppError'
+
 @injectable()
 export class UpdateUserService {
   constructor (
@@ -20,14 +22,14 @@ export class UpdateUserService {
     const { error } = updateUserSchema.validate(requestParams)
 
     if (error !== undefined) {
-      throw new Error(`Alguns parâmetros estão ausentes' ${String(error)}`)
+      throw new AppError(`Alguns parâmetros estão ausentes' ${String(error)}`, 400)
     }
 
     if (email) {
       const userByEmail = await this.userRepository.findByEmail(email)
 
       if (userByEmail) {
-        throw new Error('Esse e-mail está indisponível.')
+        throw new AppError('Esse e-mail está indisponível.', 404)
       }
 
       request.verified = false
@@ -37,7 +39,7 @@ export class UpdateUserService {
       const hashedPassword = await hash(password, 12)
 
       if (!hashedPassword) {
-        throw new Error('Houve um erro ao criptografar a nova senha.')
+        throw new AppError('Houve um erro ao criptografar a nova senha.', 400)
       }
 
       request.password = hashedPassword
@@ -46,7 +48,7 @@ export class UpdateUserService {
     const user = await this.userRepository.update(request, personID)
 
     if (!user) {
-      throw new Error('Houve um erro ao alterar o usuário.')
+      throw new AppError('Houve um erro ao alterar o usuário.', 400)
     }
 
     const { password: _, ...response } = user

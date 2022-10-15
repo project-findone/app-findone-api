@@ -8,11 +8,10 @@ export const createDisappearedSchema = joi.object({
   personCPF: joi.string(),
   gender: joi.string().required(),
   personCEP: joi.string().required(),
-  stateID: joi.number().required(),
+  state: joi.string().required(),
   city: joi.string().required(),
-  ownerID: joi.number().required(),
   personDeficiency: joi.string(),
   personKinship: joi.string().required(),
   personImage: joi.string(),
-  characteristics: joi.string().required()
+  description: joi.string().required()
 })

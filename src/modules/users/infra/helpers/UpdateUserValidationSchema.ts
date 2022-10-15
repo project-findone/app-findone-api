@@ -9,7 +9,7 @@ export const updateUserSchema = joi.object({
   password: joi.string(),
   phoneNumber: joi.string(),
   personCEP: joi.string(),
-  stateID: joi.number(),
+  state: joi.string(),
   city: joi.string(),
   score: joi.number(),
   personBiografy: joi.string(),

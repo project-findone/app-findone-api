@@ -8,7 +8,7 @@ export interface IUpdateUserDTO {
   password?: string
   phoneNumber?: string
   personCEP?: string
-  stateID?: number
+  state?: string
   city?: string
   personBiografy?: string | null
   personImage?: string | null

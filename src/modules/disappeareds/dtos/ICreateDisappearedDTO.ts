@@ -6,11 +6,9 @@ export interface ICreateDisappearedDTO {
   personCPF?: string
   gender: string
   personCEP: string
-  stateID: number
+  state: string
   city: string
-  ownerID: number
   personDeficiency?: string
   personKinship: string
-  personImage: string | null
-  characteristics: string
+  description: string
 }

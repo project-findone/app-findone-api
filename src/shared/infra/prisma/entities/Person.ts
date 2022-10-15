@@ -13,7 +13,7 @@ export class PersonEntity implements Person {
   public password!: string | null
   public phoneNumber!: string | null
   public personCEP!: string
-  public stateID!: number
+  public state!: string
   public city!: string
   public personBiografy!: string | null
   public score!: number | null
@@ -21,7 +21,7 @@ export class PersonEntity implements Person {
   public personDeficiency!: string | null
   public personKinship!: string | null
   public personImage!: string | null
-  public characteristics!: string | null
+  public description!: string | null
   public verified!: boolean
 
   constructor (props: PersonEntity) {

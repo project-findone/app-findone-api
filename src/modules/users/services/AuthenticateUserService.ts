@@ -7,6 +7,8 @@ import { sign } from 'jsonwebtoken'
 import AuthConfig from '@config/auth'
 import { AppError } from '@shared/error/AppError'
 
+import { middleArchiveService } from '@modules/case/services/MiddleArchiveService'
+
 interface Request{
   email: string
   password: string
@@ -46,6 +48,9 @@ export class AuthenticateUserService {
       })
 
       const { password: _, ...userResponse } = user
+
+      await this.usersRepository.login(user.personID)
+      await middleArchiveService.handle(user.personID, 'stop')
 
       return {
         userResponse,

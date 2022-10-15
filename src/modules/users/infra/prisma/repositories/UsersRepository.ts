@@ -4,6 +4,11 @@ import { IUsersRepository } from '@modules/users/repositories/IUsersRepository'
 
 import prisma from '@shared/infra/prisma'
 import { User } from '../entities/User'
+import { Supporter } from '@modules/supporters/infra/prisma/entites/Supporter'
+import { EntityContribution } from '@modules/supporters/infra/prisma/entites/Contribution'
+import { CaseEntity } from '@modules/case/infra/prisma/entites/Case'
+import { PersonEntity } from '@shared/infra/prisma/entities/Person'
+import subHours from 'date-fns/subHours'
 
 export class UsersRepository implements IUsersRepository {
   async create (data: ICreateUserDTO): Promise<User> {
@@ -66,7 +71,81 @@ export class UsersRepository implements IUsersRepository {
     return userUpdated as User
   }
 
-  async delete (personID: number): Promise<void> {
-    await prisma.person.delete({ where: { personID } })
+  async disable (personID: number): Promise<void> {
+    await prisma.person.update({
+      where: { personID },
+      data: { disabled: true }
+    })
+  }
+
+  async evaluateContribution (personID: number, contributionID: number, score: number): Promise<EntityContribution> {
+    const contribution = await prisma.contribution.update({
+      where: { contributionID },
+      data: {
+        score
+      }
+    })
+
+    const supporter = await prisma.person.findUnique({ where: { personID: contribution.issuer } })
+
+    const newScore = Number(supporter?.score) + Number(contribution.score)
+    await prisma.person.update({
+      where: { personID: supporter?.personID },
+      data: {
+        score: newScore
+      }
+    })
+
+    return contribution as EntityContribution
+  }
+
+  async queryCases (personID: number): Promise<CaseEntity[] | Array<{}>> {
+    const cases = await prisma.case.findMany({
+      where: {
+        person: {
+          ownerID: personID
+        }
+      }
+    })
+
+    return cases as CaseEntity[]
+  }
+
+  async querySupporters (caseID: number): Promise<Supporter[] | Array<{}>> {
+    const supporters = await prisma.supportCase.findMany({
+      where: { caseID },
+      include: {
+        person: {
+          select: {
+            personID: true,
+            personTypeID: true,
+            name: true,
+            lastname: true
+          }
+        }
+      }
+    })
+
+    return supporters
+  }
+
+  async findUserByID (personID: number): Promise<PersonEntity> {
+    const person = await prisma.person.findUnique({ where: { personID } })
+
+    return person as PersonEntity
+  }
+
+  async login (personID: number): Promise<void> {
+    await prisma.person.update({
+      where: { personID },
+      data: { login: subHours(new Date(), 3) }
+    })
+  }
+
+  async logout (personID: number): Promise<void> {
+    await prisma.person.update({
+      where: { personID },
+      data: { logout: subHours(new Date(), 3) }
+    })
   }
 }

@@ -1,0 +1,91 @@
+                    ----- Sistema de mudanças do Status do Caso -----
+
+(X) 1° Arquivação manual do Caso
+    Requisitos:
+        - Ser o responsavel pelo caso
+        - Todas as contribuição referentes a esse caso devem ter sido avaliadas
+    Consequências:
+        - Mudança no status do caso para "Arquivado"
+        - Preencher o campo de "Arquivação"
+
+(X) 2° Finalização do Caso
+    Requisitos:
+        - Ser o responsavel pelo caso
+        - Todas as contribuição referentes a esse caso devem ter sido avaliadas
+    Consequências:
+        - Mudança no status do caso para "Finalizado"
+
+( ) 3° Arquivação automática do Caso
+    Requisitos:
+        - O responsavel pelo caso deve ter estado ausente por um certo periodo de tempo (não ter logado)
+            - Criar um sitema de verificação desse tempo e de execução caso seja excedido 
+    Consequências:
+        - Mudança no status do caso para "Arquivado"
+        - Iniciar o timer para a reativação
+
+(X) 4° Reativação do Caso
+    Requisitos:
+        - Ser o responsavel pelo caso
+        - O tempo para a reativação do caso deve ter passado
+    Consequências:
+        - Mudança no status do caso para "Ativo"
+        - Limpar o campo "Arquivação" do caso 
+
+
+                    ----- Sistema de filtragem (Usuários e Desaparecidos) -----
+
+(X) 1° Consulta de Usuários
+    Requisitos:
+        - Receber o ID do usuário
+    Consequências:
+        - Exibir os dados desse usuário
+
+(X) 2° Consulta de Deaparecidos (Sistema de Busca)
+    Requisitos:
+        - Receber os filtros e seus respectivos parâmetros que foram ativados
+    Consequências:
+        - Exibir os dados dos desaparecidos que correspondem aos filtros enviados
+
+
+                    ----- Sistema de pontuação do apoiador por tempo -----
+
+( ) 1° Pontuação por tempo
+    Requisitos:
+        - Verificar se o temporizador para a ativação desse recurso foi zerado
+    Consequências:
+        - Atribuir a pontuação ao apoiador em questão
+
+
+                    ----- Sistema de autenticação do cadastro de desaparecido -----
+
+(X) 1° Verificar cadastros semelhantes (Middleware)
+    Requisitos:
+        - Receber os dados do desaparecido
+            - Interceder a requisição e enviar os dados ao middleware
+    Consequências:
+        - Ativação do middleware que irá verificar se há cadostros semelhamtes e exibilos caso existão, de acordos com algus parametros:
+            - Estão no arquivo "notes" ->
+
+
+                    ----- Sistema de visualização do mapa -----
+                    
+( ) 2° Exibir os desaparecidos (Lista/Mapa)
+    Requisitos:
+        - Receber o raio (longitude e latitude) em que os desaparecidos vão ser filtrados
+    Consequências:
+        - Exibir uma lista dos desaparidos foram filtrados
+
+
+                    ----- Sistema de comunicação em tempo real (Chat) -----
+
+( ) 1° Sistema de comunicação em tempo real
+    Requisitos:
+        - ???
+    Consequências:
+        - ???
+
+( ) 2° Sistema do Chat
+    Requisitos:
+        - ???
+    Consequências:
+        - ???

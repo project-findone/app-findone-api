@@ -10,7 +10,7 @@ export const createUserSchema = joi.object({
   password: joi.string().required(),
   phoneNumber: joi.string().required(),
   personCEP: joi.string().required(),
-  stateID: joi.number().required(),
+  state: joi.string().required(),
   personTypeID: joi.number().required(),
   city: joi.string().required(),
   score: joi.number(),

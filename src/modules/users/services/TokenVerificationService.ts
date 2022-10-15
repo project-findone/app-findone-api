@@ -4,6 +4,7 @@ import { inject, injectable } from 'tsyringe'
 
 import AuthConfig from '@config/auth'
 import { IMailProvider } from '@shared/container/providers/MailProvider/Models/IMailProvider'
+import { AppError } from '@shared/error/AppError'
 
 interface IRequest{
   email: string
@@ -25,11 +26,11 @@ export class TokenVerificationService {
     const { email } = data
 
     if (!email) {
-      throw new Error('O e-mail não foi informado.')
+      throw new AppError('O e-mail não foi informado.', 400)
     }
 
     if (!AES.Secret) {
-      throw new Error('O AES Secret não foi encontrado.')
+      throw new AppError('O AES Secret não foi encontrado.', 404)
     }
 
     const verifyCode = (Math.floor(Math.random() * 10000) + 1000).toString()
@@ -50,8 +51,8 @@ export class TokenVerificationService {
 
       return { token }
     } catch (e) {
-      throw new Error(`Houve um erro ao criar o token de verificação.
-        \n \n${e as string}`)
+      throw new AppError(`Houve um erro ao criar o token de verificação.
+        \n \n${e as string}`, 400)
     }
   }
 }

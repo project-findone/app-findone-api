@@ -5,6 +5,7 @@ import { inject, injectable } from 'tsyringe'
 import { hash } from 'bcrypt'
 
 import { createUserSchema } from '../infra/helpers/CreateUserValidationSchema'
+import { AppError } from '@shared/error/AppError'
 
 @injectable()
 class CreateUserService {
@@ -19,19 +20,19 @@ class CreateUserService {
     const { error } = createUserSchema.validate(request)
 
     if (error !== undefined) {
-      throw new Error(`Alguns parâmetros estão ausentes' ${String(error)}`)
+      throw new AppError(`Alguns parâmetros estão ausentes' ${String(error)}`, 400)
     }
 
     const userExists = await this.usersRepository.findByEmail(email)
 
     if (userExists) {
-      throw new Error('O e-mail já foi cadastrado.')
+      throw new AppError('O e-mail já foi cadastrado.', 400)
     }
 
     const hashedPassword = await hash(password, 12)
 
     if (!hashedPassword) {
-      throw new Error('Houve um erro ao criptografar a senha.')
+      throw new AppError('Houve um erro ao criptografar a senha.', 400)
     }
 
     request.password = hashedPassword
@@ -39,7 +40,7 @@ class CreateUserService {
     const user = await this.usersRepository.create(request)
 
     if (!user) {
-      throw new Error('Houve um erro ao cadastrar o usuário.')
+      throw new AppError('Houve um erro ao cadastrar o usuário.', 400)
     }
 
     const { password: _, ...response } = user
