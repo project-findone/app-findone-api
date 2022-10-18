@@ -10,7 +10,7 @@ export interface IQueryDisappearedDTO {
   }
   minAge: number | undefined
   maxAge: number | undefined
-  personTypes: number[] | undefined
+  caseTypes: number[] | undefined
   caseStatus: number[] | undefined
   skin: number | undefined
   hair: number | undefined

@@ -40,65 +40,8 @@ export class DisappearedRepository implements IDisappearedRepository {
   }
 
   async findDisappearedsByFilters (data: IQueryDisappearedDTO): Promise<Disappeared[]> {
-    if (data.caseStatus) {
-      const disappeareds = await prisma.person.findMany({
-        where: {
-          personTypeID: {
-            in: data.personTypes
-          },
-          age: {
-            gte: data.minAge,
-            lte: data.maxAge
-          },
-          ...data.disappeared,
-          AND: [
-            {
-              disCharacteristic: {
-                some: {
-                  characteristicID: data.eyes
-                }
-              }
-            },
-            {
-              disCharacteristic: {
-                some: {
-                  characteristicID: data.hair
-                }
-              }
-            },
-            {
-              disCharacteristic: {
-                some: {
-                  characteristicID: data.skin
-                }
-              }
-            },
-            {
-              disCharacteristic: {
-                some: {
-                  characteristicID: data.typeHair
-                }
-              }
-            }
-          ],
-          case: {
-            some: {
-              caseStatusID: {
-                in: data.caseStatus
-              }
-            }
-          }
-        }
-      })
-
-      return disappeareds as Disappeared[]
-    }
-
     const disappeareds = await prisma.person.findMany({
       where: {
-        personTypeID: {
-          in: data.personTypes
-        },
         age: {
           gte: data.minAge,
           lte: data.maxAge
@@ -136,7 +79,12 @@ export class DisappearedRepository implements IDisappearedRepository {
         ],
         case: {
           some: {
-            caseStatusID: 1
+            caseTypeID: {
+              in: data.caseTypes
+            },
+            caseStatusID: {
+              in: data.caseStatus
+            }
           }
         }
       }

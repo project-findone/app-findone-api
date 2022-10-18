@@ -15,7 +15,7 @@
     Consequências:
         - Mudança no status do caso para "Finalizado"
 
-( ) 3° Arquivação automática do Caso
+(X) 3° Arquivação automática do Caso
     Requisitos:
         - O responsavel pelo caso deve ter estado ausente por um certo periodo de tempo (não ter logado)
             - Criar um sitema de verificação desse tempo e de execução caso seja excedido 
@@ -45,16 +45,7 @@
         - Receber os filtros e seus respectivos parâmetros que foram ativados
     Consequências:
         - Exibir os dados dos desaparecidos que correspondem aos filtros enviados
-
-
-                    ----- Sistema de pontuação do apoiador por tempo -----
-
-( ) 1° Pontuação por tempo
-    Requisitos:
-        - Verificar se o temporizador para a ativação desse recurso foi zerado
-    Consequências:
-        - Atribuir a pontuação ao apoiador em questão
-
+        
 
                     ----- Sistema de autenticação do cadastro de desaparecido -----
 

@@ -80,4 +80,29 @@ export class SupportersRepository implements ISupportersRepository {
 
     return cases
   }
+
+  async ranking (state: string, city: string): Promise<Supporter[] | Array<{}>> {
+    const supporters = await prisma.person.findMany({
+      where: {
+        personTypeID: 4,
+        state,
+        city
+      },
+      orderBy: {
+        score: 'desc'
+      },
+      select: {
+        personTypeID: true,
+        personID: true,
+        name: true,
+        lastname: true,
+        personBiografy: true,
+        state: true,
+        city: true,
+        score: true
+      }
+    })
+
+    return supporters
+  }
 }

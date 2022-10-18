@@ -1,5 +1,4 @@
 export interface ICreateUserDTO {
-  personTypeID: number
   name: string
   lastname: string
   birthDate: Date

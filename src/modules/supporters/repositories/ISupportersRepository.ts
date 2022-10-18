@@ -11,4 +11,5 @@ export interface ISupportersRepository{
   sendContribution(data: ICreateContributionDTO, personID: number): Promise<EntityContribution>
   sendAttachment(file: string, contributionID: number): Promise<EntityAttachment>
   queryCases(personID: number): Promise<CaseEntity[] | Array<{}>>
+  ranking(state: string, city: string): Promise<Supporter[] | Array<{}>>
 }

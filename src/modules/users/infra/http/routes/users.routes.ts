@@ -82,9 +82,9 @@ usersRouter.get('/:personID', async (request, response) => {
   return response.json({ user })
 })
 
-usersRouter.patch('/logout', /* ensureAuthenticated, */ async (request, response) => {
+usersRouter.patch('/logout', ensureAuthenticated, async (request, response) => {
   const logoutUserService = container.resolve(LogoutUserService)
-  const personID = Number(request.user.id) | 0
+  const personID = Number(request.user.id)
   const user = await logoutUserService.handle(personID)
   return response.json({ message: user })
 })

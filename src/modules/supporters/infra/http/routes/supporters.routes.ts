@@ -9,6 +9,7 @@ import SendContributionService from '@modules/supporters/services/SendContributi
 import SendAttachmentService from '@modules/supporters/services/SendAttachmentService'
 import QueryCasesService from '@modules/supporters/services/QueryCasesService'
 import BecomeSupporterService from '@modules/supporters/services/BecomeSupporterService'
+import RankingSupportersService from '@modules/supporters/services/RankingSupportersService'
 
 import { ensureAuthenticated } from '@modules/users/infra/http/middlewares/ensureAuthenticated'
 
@@ -17,24 +18,24 @@ const uploadDoc = multer(uploadConfig.multer.docs)
 
 const supportersRouter = Router()
 
-supportersRouter.put('/', /* ensureAuthenticated, */ async (request, response) => {
+supportersRouter.put('/', ensureAuthenticated, async (request, response) => {
   const becomeSupporterService = container.resolve(BecomeSupporterService)
-  const personID = Number(1 /* request.user.id */)
+  const personID = Number(request.user.id)
   const supporter = await becomeSupporterService.handle(request.body, personID)
   return response.json({ supporter })
 })
 
-supportersRouter.post('/:caseID', /* ensureAuthenticated, */ async (request, response) => {
+supportersRouter.post('/:caseID', ensureAuthenticated, async (request, response) => {
   const joinCaseService = container.resolve(JoinCaseService)
   const caseID = Number(request.params.caseID)
-  const personID = Number(4 /* request.user.id */)
+  const personID = Number(request.user.id)
   const supporter = await joinCaseService.handle(caseID, personID)
   return response.json({ message: supporter })
 })
 
-supportersRouter.post('/', /* ensureAuthenticated, */ async (request, response) => {
+supportersRouter.post('/', ensureAuthenticated, async (request, response) => {
   const sendContributionService = container.resolve(SendContributionService)
-  const personID = Number(1 /* request.user.id */)
+  const personID = Number(request.user.id)
   const contribution = await sendContributionService.handle(request.body, personID)
   return response.json({ contribution })
 })
@@ -66,6 +67,13 @@ supportersRouter.get('/', ensureAuthenticated, async (request, response) => {
   const personID = Number(request.user.id)
   const cases = await queryCasesService.handle(personID)
   return response.json({ cases })
+})
+
+supportersRouter.get('/ranking', async (request, response) => {
+  const rankingSupportersService = container.resolve(RankingSupportersService)
+  const filters = request.body
+  const supporters = await rankingSupportersService.handle(filters)
+  return response.json({ supporters })
 })
 
 export { supportersRouter }

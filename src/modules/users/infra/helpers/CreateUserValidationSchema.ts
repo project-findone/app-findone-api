@@ -11,7 +11,6 @@ export const createUserSchema = joi.object({
   phoneNumber: joi.string().required(),
   personCEP: joi.string().required(),
   state: joi.string().required(),
-  personTypeID: joi.number().required(),
   city: joi.string().required(),
   score: joi.number(),
   personBiografy: joi.string(),
