@@ -12,7 +12,7 @@ class JoinCaseService {
 
   public async handle (caseID: number, personID: number): Promise<{} | null> {
     if (!caseID || typeof caseID !== 'number') {
-      throw new AppError(' Não foi possível acessar o ID do caso.', 400)
+      throw new AppError(' Não foi possível acessar o ID do caso.', 500)
     }
 
     const supportCase = await this.supportersRepository.joinCase(caseID, personID)
@@ -21,7 +21,7 @@ class JoinCaseService {
       return {}
     }
 
-    throw new AppError('Não foi possível ingressar no caso.', 400)
+    throw new AppError('Não foi possível ingressar no caso.', 500)
   }
 }
 

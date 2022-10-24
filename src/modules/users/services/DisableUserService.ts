@@ -14,15 +14,15 @@ export default class DisableUserService {
 
   public async handle (personID: number): Promise<{}> {
     if (!personID || typeof personID !== 'number') {
-      throw new AppError(' Não foi possível acessar o ID do usuário.', 400)
+      throw new AppError('Não foi possível acessar o ID do usuário.', 500)
     }
 
     try {
       await this.userRepository.disable(personID)
-      await middleArchiveService.handle(personID, false)
+      await middleArchiveService.handle(personID, 'start')
       return {}
     } catch {
-      throw new AppError('Não foi possível realizar a desativação do perfil.', 400)
+      throw new AppError('Não foi possível realizar a desativação do perfil.', 500)
     }
   }
 }

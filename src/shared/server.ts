@@ -19,15 +19,18 @@ app.use((
   response: Response,
   next: NextFunction) => {
   if (error instanceof AppError) {
-    return response.status(error.statusCode).json({ 
-      status: "Error",
-      message: error.message })
-
+    return response.status(error.statusCode).json({
+      status: error.status,
+      message: error.message
+    })
   }
 
+  console.error(error)
+
   return response.status(500).json({
-    status: "Default Error",
-    message: "Internal Server Error"})
+    status: 'Default Error',
+    message: 'Internal Server Error'
+  })
 })
 
 app.listen(3333, () => {

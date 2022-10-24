@@ -6,6 +6,7 @@ import { ISupportersRepository } from '../repositories/ISupportersRepository'
 import { AppError } from '@shared/error/AppError'
 
 import { createContributionSchema } from '@modules/supporters/infra/helpers/CreateContributionValidationSchema'
+import { JoiValidationError } from '@shared/error/ValidationError'
 
 @injectable()
 export class SendContributionService {
@@ -18,13 +19,13 @@ export class SendContributionService {
     const { error } = createContributionSchema.validate(request)
 
     if (error !== undefined) {
-      throw new AppError(`Alguns parâmetros referentes ao caso estão ausentes' ${String(error)}`, 400)
+      throw new JoiValidationError(error)
     }
 
     const contribution = await this.supportersRepository.sendContribution(request, personID)
 
     if (!contribution) {
-      throw new AppError('Não foi possivel enviar a contribuição.', 400)
+      throw new AppError('Não foi possivel enviar a contribuição.', 500)
     }
 
     return contribution

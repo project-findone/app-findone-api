@@ -20,7 +20,7 @@ export class QueryCasesService {
     const supporters = await this.supportersRepository.ranking(request.state, request.city)
 
     if (!supporters) {
-      throw new AppError('Houve um erro ao consultar o Ranking.', 400)
+      throw new AppError('Houve um erro ao consultar o Ranking.', 500)
     }
 
     return supporters

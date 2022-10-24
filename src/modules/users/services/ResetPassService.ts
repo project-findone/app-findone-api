@@ -33,13 +33,13 @@ export class ResetPassService {
     const hashedPassword = await hash(newPassword, 12)
 
     if (!hashedPassword) {
-      throw new AppError('Não foi possível criptografar a nova senha.', 400)
+      throw new AppError('Não foi possível criptografar a nova senha.', 500)
     }
 
     const userUpdated = await this.userRepository.updatePass(email, hashedPassword)
 
     if (!userUpdated) {
-      throw new AppError('Não foi possível atualizar o cadastro do usuário.', 400)
+      throw new AppError('Não foi possível atualizar o cadastro do usuário.', 500)
     }
 
     const { password: _, ...response } = userUpdated

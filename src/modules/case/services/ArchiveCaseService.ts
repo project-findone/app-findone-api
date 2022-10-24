@@ -12,17 +12,17 @@ export default class ArchiveCaseService {
 
   public async handle (personID: number, caseID: number): Promise<{}> {
     if (!personID || typeof personID !== 'number') {
-      throw new AppError(' Não foi possível acessar o ID do usuário.', 400)
+      throw new AppError(' Não foi possível acessar o ID do usuário.', 500)
     }
 
     if (!caseID || typeof caseID !== 'number') {
-      throw new AppError(' Não foi possível acessar o ID do caso.', 400)
+      throw new AppError(' Não foi possível acessar o ID do caso.', 500)
     }
 
     const contributions = await this.casesRepository.archiveCase(personID, caseID)
 
     if (contributions.length > 0) {
-      throw new AppError('Não foi possível realizar a arquivação do caso, por conta da pressensa de contribuições com avaliações pendentes.', 400)
+      throw new AppError('Não foi possível realizar a arquivação do caso, porque há casos não avaliados.', 405)
     }
 
     return {}

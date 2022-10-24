@@ -14,15 +14,15 @@ export default class LogoutUserService {
 
   public async handle (personID: number): Promise<{}> {
     if (!personID || typeof personID !== 'number') {
-      throw new AppError(' Não foi possível acessar o ID do usuário.', 400)
+      throw new AppError('Não foi possível acessar o ID do usuário.', 500)
     }
 
     try {
       await this.userRepository.logout(personID)
       await middleArchiveService.handle(personID, 'start')
       return {}
-    } catch (e) {
-      throw new AppError('Não foi possível realizar logout.' + e.message, 400)
+    } catch {
+      throw new AppError('Não foi possível realizar logout.', 500)
     }
   }
 }

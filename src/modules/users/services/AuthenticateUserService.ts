@@ -57,7 +57,7 @@ export class AuthenticateUserService {
         token
       }
     } catch {
-      throw new AppError('O JWTSecret não foi encontrado.', 500)
+      throw new AppError('O JWTSecret não foi encontrado.', 503)
     }
   }
 }

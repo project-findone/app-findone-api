@@ -21,19 +21,21 @@ export class UpdateUserImageService {
   ) {}
 
   public async handle ({ personID, fileName }: IRequest): Promise<User | undefined | {}> {
-    const { personImage } = await this.userRepository.findByID(personID)
-    const path = 'images'
+    try {
+      const { personImage } = await this.userRepository.findByID(personID) as User
+      const path = 'images'
 
-    if (personImage) {
-      await this.storageProvider.deleteFile(personImage, path)
+      if (personImage) {
+        await this.storageProvider.deleteFile(personImage, path)
+      }
+      if (fileName) {
+        const newFileName = await this.storageProvider.saveFile(fileName, path)
+        const user = await this.userRepository.updateImage(newFileName, personID)
+        return { message: user }
+      }
+    } catch {
+      throw new AppError('Não foi possível atualizar a imagem do usuário.', 500)
     }
-    if (fileName) {
-      const newFileName = await this.storageProvider.saveFile(fileName, path)
-      const user = await this.userRepository.updateImage(newFileName, personID)
-      return { message: user }
-    }
-
-    throw new AppError('Não foi possível atualizar a imagem do usuário.', 400)
   }
 }
 

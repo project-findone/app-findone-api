@@ -25,7 +25,7 @@ export class BecomeSupporterService {
     const supporter = await this.supportersRepository.becomeSupporter(personBiografy, personID)
 
     if (!supporter) {
-      throw new AppError('Houve um erro ao se tornar um apoiador.', 400)
+      throw new AppError('Houve um erro ao se tornar um apoiador.', 500)
     }
 
     return supporter

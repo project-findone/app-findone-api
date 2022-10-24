@@ -22,7 +22,7 @@ export default class FinishCaseService {
     const contributions = await this.casesRepository.finishCase(personID, caseID)
 
     if (contributions.length > 0) {
-      throw new AppError('Não foi possível realizar a finalização do caso, por conta da pressençaa de contribuições com avaliações pendentes.', 400)
+      throw new AppError('Não foi possível realizar a finalização do caso, porque há casos não avaliados.', 405)
     }
 
     return {}

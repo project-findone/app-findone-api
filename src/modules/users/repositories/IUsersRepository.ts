@@ -9,8 +9,8 @@ import { PersonEntity } from '@shared/infra/prisma/entities/Person'
 export interface IUsersRepository{
   create(data: ICreateUserDTO): Promise<User>
   findByEmail(email: string): Promise<User | null>
-  findByID(personID: number): Promise<User>
-  verifyEmail(email: string, verify: boolean): Promise<User | null>
+  findByID(personID: number): Promise<User | null>
+  verifyEmail(email: string, verify: boolean): Promise<User>
   updatePass(email: string, newPassword: string): Promise<User>
   update(data: IUpdateUserDTO, personID: number): Promise<User>
   updateImage(image: string, personID: number): Promise<User>

@@ -2,12 +2,12 @@ import { inject, injectable } from 'tsyringe'
 import { Lost } from '@modules/losts/infra/prisma/entites/Lost'
 import { ILostsRepository } from '../repositories/ILostsRepository'
 import { IBecomeLostDTO } from '@modules/losts/dtos/IBecomeLostDTO'
-import { ICreateCaseDTO } from '@modules/case/dtos/ICreateCaseDTO'
 
 import { becomeLostValidationSchema } from '@modules/losts/infra/helpers/BecomeLostValidationSchema'
-import { createCaseSchema } from '@modules/case/infra/helpers/CreateCaseValidationSchema'
+import { createCaseSchema } from '@modules/disappeareds/infra/helpers/CreateDisappearedValidationSchema'
 
 import { AppError } from '@shared/error/AppError'
+import { JoiValidationError } from '@shared/error/ValidationError'
 
 @injectable()
 export class BecomeLostService {
@@ -16,20 +16,21 @@ export class BecomeLostService {
     private lostsRepository: ILostsRepository
   ) {}
 
-  public async handle (lostData: IBecomeLostDTO, caseData: ICreateCaseDTO, personID: number, characteristics: number[]): Promise<Lost | undefined | {}> {
-    if (lostData) {
-      const { error } = becomeLostValidationSchema.validate(lostData)
+  public async handle (request: IBecomeLostDTO, personID: number): Promise<Lost | undefined | {}> {
+    const { case: caseLost, characteristics, lost } = request
+    if (lost) {
+      const { error } = becomeLostValidationSchema.validate(lost)
 
       if (error !== undefined) {
-        throw new AppError(`Alguns parâmetros referentes ao perdido estão ausentes' ${String(error)}`, 400)
+        throw new JoiValidationError(error)
       }
     }
 
-    if (caseData) {
-      const { error } = createCaseSchema.validate(caseData)
+    if (caseLost) {
+      const { error } = createCaseSchema.validate(caseLost)
 
       if (error !== undefined) {
-        throw new AppError(`Alguns parâmetros referentes ao caso estão ausentes' ${String(error)}`, 400)
+        throw new JoiValidationError(error)
       }
     }
 
@@ -37,12 +38,12 @@ export class BecomeLostService {
       throw new AppError('Coloque 3 caracteristicas no mínimo', 400)
     }
 
-    const lost = await this.lostsRepository.becomeLost(lostData, caseData, personID, characteristics)
+    const result = await this.lostsRepository.becomeLost(request, personID)
 
-    if (!lost) {
-      throw new AppError('Houve um erro ao se tornar um perdido.', 400)
+    if (!result) {
+      throw new AppError('Houve um erro ao se tornar um perdido.', 500)
     }
-    return lost
+    return result
   }
 }
 

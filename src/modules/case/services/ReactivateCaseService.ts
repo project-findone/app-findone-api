@@ -12,17 +12,17 @@ export default class ReactivateCaseService {
 
   public async handle (personID: number, caseID: number): Promise<{}> {
     if (!personID || typeof personID !== 'number') {
-      throw new AppError(' Não foi possível acessar o ID do usuário.', 400)
+      throw new AppError(' Não foi possível acessar o ID do usuário.', 500)
     }
 
     if (!caseID || typeof caseID !== 'number') {
-      throw new AppError(' Não foi possível acessar o ID do caso.', 400)
+      throw new AppError(' Não foi possível acessar o ID do caso.', 500)
     }
 
     const thisCase = await this.casesRepository.reactivateCase(personID, caseID)
 
     if (thisCase === null) {
-      throw new AppError('Não foi possível realizar a reativação do caso.', 400)
+      throw new AppError('Não foi possível realizar a reativação do caso.', 500)
     }
 
     return {}

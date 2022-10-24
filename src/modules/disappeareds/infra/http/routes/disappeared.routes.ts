@@ -13,9 +13,7 @@ disappearedRouter.post('/', ensureAuthenticated, async (request, response) => {
   const { birthDate } = request.body
   request.body.birthDate = new Date(birthDate)
   const ownerID = Number(request.user.id)
-  const { characteristics } = request.body
-  const { passCheck } = request.body
-  const disappeared = await createDisappearedService.handle(request.body.disappeared, request.body.case, ownerID, characteristics, passCheck)
+  const disappeared = await createDisappearedService.handle(request.body, ownerID)
   return response.json({ disappeared })
 })
 

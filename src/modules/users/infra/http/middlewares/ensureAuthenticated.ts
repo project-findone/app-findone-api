@@ -1,22 +1,23 @@
 import { Request, Response, NextFunction } from 'express'
 import { verify } from 'jsonwebtoken'
-
 import AuthConfig from '@config/auth'
 
-export function ensureAuthenticated (
+import { AppError } from '@shared/error/AppError'
+
+export const ensureAuthenticated = (
   request: Request,
   response: Response,
   next: NextFunction
-): void {
+): void => {
   const authHeader = request.headers.authorization
   const { JWT } = AuthConfig
 
   if (!authHeader) {
-    throw new Error('O token de autenticação está ausente.')
+    throw new AppError('O token de autenticação está ausente.', 400)
   }
 
   if (!JWT.Secret) {
-    throw new Error('O JWT Secret não foi encontrado.')
+    throw new AppError('O JWT Secret não foi encontrado.', 503)
   }
 
   const [, token] = authHeader.split(' ')
@@ -31,6 +32,6 @@ export function ensureAuthenticated (
 
     return next()
   } catch {
-    throw new Error('O token informado não é válido.')
+    throw new AppError('O token informado não é válido.', 401)
   }
 }

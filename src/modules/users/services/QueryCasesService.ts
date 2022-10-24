@@ -18,8 +18,8 @@ export class QueryCasesService {
 
     const cases = await this.userRepository.queryCases(personID)
 
-    if (cases.length <= 0) {
-      throw new AppError('Houve um erro ao consultar os casos.', 400)
+    if (cases.length === 0) {
+      throw new AppError('Nenhum caso foi encontrado.', 404)
     }
 
     return cases

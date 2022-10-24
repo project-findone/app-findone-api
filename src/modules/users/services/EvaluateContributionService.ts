@@ -13,13 +13,13 @@ class EvaluateContributionService {
 
   public async handle (personID: number, contributionID: number, score: number): Promise<EntityContribution | undefined | {}> {
     if (!contributionID || typeof contributionID !== 'number') {
-      throw new AppError(' Não foi possível acessar o ID da contribuição.', 400)
+      throw new AppError('Não foi possível acessar o ID da contribuição.', 500)
     }
 
     const contribution = await this.usersRepository.evaluateContribution(personID, contributionID, score)
 
     if (!contribution) {
-      throw new AppError('Não foi possível avaliar a contribuição.', 400)
+      throw new AppError('Não foi possível avaliar a contribuição.', 500)
     }
 
     return contribution

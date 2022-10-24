@@ -19,7 +19,7 @@ export class FindUserService {
     const person = await this.userRepository.findUserByID(personID)
 
     if (!person) {
-      throw new AppError('Houve um erro ao consultar a pessoa.', 400)
+      throw new AppError('Nenhuma pessoa foi encontrada.', 404)
     }
 
     return person

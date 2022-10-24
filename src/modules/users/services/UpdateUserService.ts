@@ -6,6 +6,7 @@ import { hash } from 'bcrypt'
 import { updateUserSchema } from '../infra/helpers/UpdateUserValidationSchema'
 
 import { AppError } from '@shared/error/AppError'
+import { JoiValidationError } from '@shared/error/ValidationError'
 
 @injectable()
 export class UpdateUserService {
@@ -22,7 +23,7 @@ export class UpdateUserService {
     const { error } = updateUserSchema.validate(requestParams)
 
     if (error !== undefined) {
-      throw new AppError(`Alguns parâmetros estão ausentes' ${String(error)}`, 400)
+      throw new JoiValidationError(error)
     }
 
     if (email) {
@@ -39,7 +40,7 @@ export class UpdateUserService {
       const hashedPassword = await hash(password, 12)
 
       if (!hashedPassword) {
-        throw new AppError('Houve um erro ao criptografar a nova senha.', 400)
+        throw new AppError('Houve um erro ao criptografar a nova senha.', 500)
       }
 
       request.password = hashedPassword
@@ -48,7 +49,7 @@ export class UpdateUserService {
     const user = await this.userRepository.update(request, personID)
 
     if (!user) {
-      throw new AppError('Houve um erro ao alterar o usuário.', 400)
+      throw new AppError('Houve um erro ao alterar o usuário.', 500)
     }
 
     const { password: _, ...response } = user

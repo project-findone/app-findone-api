@@ -13,7 +13,7 @@ export default class MiddleArchiveService {
 
   public async handle (personID: number, archiveOption: 'start' | 'stop'): Promise<void> {
     if (!personID || typeof personID !== 'number') {
-      throw new AppError(' Não foi possível acessar o ID do usuário.', 400)
+      throw new AppError(' Não foi possível acessar o ID do usuário.', 500)
     }
 
     if (archiveOption === 'start') {

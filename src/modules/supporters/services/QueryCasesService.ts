@@ -19,7 +19,7 @@ export class QueryCasesService {
     const cases = await this.supportersRepository.queryCases(personID)
 
     if (!cases) {
-      throw new AppError('Houve um erro ao consultar os casos.', 400)
+      throw new AppError('Houve um erro ao consultar os casos.', 500)
     }
 
     return cases

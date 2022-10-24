@@ -15,8 +15,8 @@ class QueryDisappearedService {
   public async handle (request: IQueryDisappearedDTO): Promise<Disappeared[]> {
     const disappeareds = await this.disappearedRepository.findDisappearedsByFilters(request)
 
-    if (disappeareds.length <= 0) {
-      throw new AppError('Não foi possivél encontrar casos de acordo com esses filtros.', 400)
+    if (disappeareds.length === 0) {
+      throw new AppError('Não foi possivel encontrar casos de acordo com esses filtros.', 404)
     }
 
     return disappeareds

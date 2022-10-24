@@ -1,5 +1,6 @@
 import { container } from 'tsyringe'
 import { Router } from 'express'
+import { AppError } from '@shared/error/AppError'
 
 import multer from 'multer'
 import uploadConfig from 'config/Upload'
@@ -30,7 +31,9 @@ usersRouter.post('/', async (request, response) => {
 
 usersRouter.put('/', ensureAuthenticated, async (request, response) => {
   const updateUserService = container.resolve(UpdateUserService)
+  const { birthDate } = request.body
   const personID = Number(request.user.id)
+  request.body.birthDate = new Date(birthDate)
   const user = await updateUserService.handle(request.body, personID)
   return response.json({ user })
 })
@@ -43,7 +46,7 @@ usersRouter.patch('/', ensureAuthenticated, uploadImage.single('image'), async (
     const user = await updateUserImageService.handle({ personID, fileName })
     return response.json({ message: user })
   }
-  return response.json({ message: 'Não é um tipo de arquivo válido' })
+  throw new AppError('Não é um tipo de arquivo válido', 400)
 })
 
 usersRouter.patch('/disable', /* ensureAuthenticated, */ async (request, response) => {
@@ -85,8 +88,8 @@ usersRouter.get('/:personID', async (request, response) => {
 usersRouter.patch('/logout', ensureAuthenticated, async (request, response) => {
   const logoutUserService = container.resolve(LogoutUserService)
   const personID = Number(request.user.id)
-  const user = await logoutUserService.handle(personID)
-  return response.json({ message: user })
+  await logoutUserService.handle(personID)
+  return response.json({ status: 'Sucess' })
 })
 
 export { usersRouter }

@@ -24,7 +24,7 @@ export class SendAttachmentService {
     const path = 'attachment'
 
     if (!contributionID || typeof contributionID !== 'number') {
-      throw new AppError(' Não foi possível acessar o ID da contribuição.', 400)
+      throw new AppError(' Não foi possível acessar o ID da contribuição.', 500)
     }
 
     if (fileName) {
@@ -33,7 +33,7 @@ export class SendAttachmentService {
       return attachment
     }
 
-    throw new AppError('Não foi possível enviar o anexo.', 400)
+    throw new AppError('Não foi possível enviar o anexo.', 500)
   }
 }
 

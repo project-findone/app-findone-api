@@ -6,6 +6,7 @@ import { hash } from 'bcrypt'
 
 import { createUserSchema } from '../infra/helpers/CreateUserValidationSchema'
 import { AppError } from '@shared/error/AppError'
+import { JoiValidationError } from '@shared/error/ValidationError'
 
 @injectable()
 class CreateUserService {
@@ -20,19 +21,19 @@ class CreateUserService {
     const { error } = createUserSchema.validate(request)
 
     if (error !== undefined) {
-      throw new AppError(`Alguns parâmetros estão ausentes' ${String(error)}`, 400)
+      throw new JoiValidationError(error)
     }
 
     const userExists = await this.usersRepository.findByEmail(email)
 
     if (userExists) {
-      throw new AppError('O e-mail já foi cadastrado.', 400)
+      throw new AppError('O e-mail já foi cadastrado.', 405)
     }
 
     const hashedPassword = await hash(password, 12)
 
     if (!hashedPassword) {
-      throw new AppError('Houve um erro ao criptografar a senha.', 400)
+      throw new AppError('Houve um erro ao criptografar a senha.', 500)
     }
 
     request.password = hashedPassword
@@ -40,7 +41,7 @@ class CreateUserService {
     const user = await this.usersRepository.create(request)
 
     if (!user) {
-      throw new AppError('Houve um erro ao cadastrar o usuário.', 400)
+      throw new AppError('Houve um erro ao cadastrar o usuário.', 500)
     }
 
     const { password: _, ...response } = user

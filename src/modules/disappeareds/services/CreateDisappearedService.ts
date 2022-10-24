@@ -1,13 +1,12 @@
 import { Disappeared } from '../infra/prisma/entites/Disappeared'
 import { ICreateDisappearedDTO } from '../dtos/ICreateDisappearedDTO'
-import { ICreateCaseDTO } from '@modules/case/dtos/ICreateCaseDTO'
 import { IDisappearedRepository } from '../repositories/IDisappearedRepository'
 import { inject, injectable } from 'tsyringe'
 
-import { createDisappearedSchema } from '../infra/helpers/CreateDisappearedValidationSchema'
-import { createCaseSchema } from '@modules/case/infra/helpers/CreateCaseValidationSchema'
+import { createDisappearedSchema, createCaseSchema } from '../infra/helpers/CreateDisappearedValidationSchema'
 
 import { AppError } from '@shared/error/AppError'
+import { JoiValidationError } from '@shared/error/ValidationError'
 
 @injectable()
 class CreateDisappearedService {
@@ -16,20 +15,21 @@ class CreateDisappearedService {
     private disappearedRepository: IDisappearedRepository
   ) {}
 
-  public async handle (disappearedData: ICreateDisappearedDTO, caseData: ICreateCaseDTO, ownerID: number, characteristics: number[], passCheck: boolean): Promise<Disappeared | Disappeared[] | undefined | {} | []> {
-    if (disappearedData) {
-      const { error } = createDisappearedSchema.validate(disappearedData)
+  public async handle (request: ICreateDisappearedDTO, ownerID: number): Promise<Disappeared | Disappeared[] | undefined | {} | []> {
+    const { characteristics, disappeared, case: caseDisappeared, passCheck } = request
+    if (disappeared) {
+      const { error } = createDisappearedSchema.validate(disappeared)
 
       if (error !== undefined) {
-        throw new AppError(`Alguns parâmetros referentes ao desaparecido estão ausentes' ${String(error)}`, 400)
+        throw new JoiValidationError(error)
       }
     }
 
-    if (caseData) {
-      const { error } = createCaseSchema.validate(caseData)
+    if (caseDisappeared) {
+      const { error } = createCaseSchema.validate(caseDisappeared)
 
       if (error !== undefined) {
-        throw new AppError(`Alguns parâmetros referentes ao caso estão ausentes' ${String(error)}`, 400)
+        throw new JoiValidationError(error)
       }
     }
 
@@ -38,17 +38,17 @@ class CreateDisappearedService {
     }
 
     if (!passCheck) {
-      const disappeareds = await this.disappearedRepository.findSimilarDisappeareds(disappearedData, characteristics)
+      const disappeareds = await this.disappearedRepository.findSimilarDisappeareds(request)
       if (disappeareds.length > 0) return disappeareds
     }
 
-    const disappeared = await this.disappearedRepository.create(disappearedData, caseData, ownerID, characteristics)
+    const result = await this.disappearedRepository.create(request, ownerID)
 
-    if (!disappeared) {
-      throw new AppError('Houve um erro ao cadastrar o desaparecido.', 400)
+    if (!result) {
+      throw new AppError('Houve um erro ao cadastrar o desaparecido.', 500)
     }
 
-    return disappeared
+    return result
   }
 }
 
