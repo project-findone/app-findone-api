@@ -16,39 +16,44 @@ class CreateDisappearedService {
   ) {}
 
   public async handle (request: ICreateDisappearedDTO, ownerID: number): Promise<Disappeared | Disappeared[] | undefined | {} | []> {
-    const { characteristics, disappeared, case: caseDisappeared, passCheck } = request
-    if (disappeared) {
-      const { error } = createDisappearedSchema.validate(disappeared)
+    try {
+      const { characteristics, disappeared, case: caseDisappeared, passCheck } = request
+      if (disappeared) {
+        const { error } = createDisappearedSchema.validate(disappeared)
 
-      if (error !== undefined) {
-        throw new JoiValidationError(error)
+        if (error !== undefined) {
+          throw new JoiValidationError(error)
+        }
       }
-    }
 
-    if (caseDisappeared) {
-      const { error } = createCaseSchema.validate(caseDisappeared)
+      if (caseDisappeared) {
+        const { error } = createCaseSchema.validate(caseDisappeared)
 
-      if (error !== undefined) {
-        throw new JoiValidationError(error)
+        if (error !== undefined) {
+          throw new JoiValidationError(error)
+        }
       }
+
+      if (!characteristics) {
+        throw new AppError('A propriedade "characteristics" é obrigatória')
+      } else if (characteristics.length < 3 || characteristics.length > 4) {
+        throw new AppError('Coloque 3 caracteristicas no mínimo e no máximo 4', 400)
+      }
+
+      if (!passCheck) {
+        const disappeareds = await this.disappearedRepository.findSimilarDisappeareds(request)
+        if (disappeareds.length > 0) return disappeareds
+      }
+
+      const result = await this.disappearedRepository.create(request, ownerID)
+
+      if (!result) {
+        throw new AppError('Houve um erro ao cadastrar o desaparecido.', 500)
+      }
+      return result
+    } catch (err) {
+      throw new AppError('Houve um erro ao invocar o serviço. Por favor, verifique a estrutura da requisição.')
     }
-
-    if (characteristics.length < 3 || characteristics.length > 4) {
-      throw new AppError('Coloque 3 caracteristicas no mínimo e no máximo 4', 400)
-    }
-
-    if (!passCheck) {
-      const disappeareds = await this.disappearedRepository.findSimilarDisappeareds(request)
-      if (disappeareds.length > 0) return disappeareds
-    }
-
-    const result = await this.disappearedRepository.create(request, ownerID)
-
-    if (!result) {
-      throw new AppError('Houve um erro ao cadastrar o desaparecido.', 500)
-    }
-
-    return result
   }
 }
 
