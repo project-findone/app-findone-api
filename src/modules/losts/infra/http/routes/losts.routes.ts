@@ -9,9 +9,8 @@ const lostsRouter = Router()
 
 lostsRouter.put('/', ensureAuthenticated, async (request, response) => {
   const becomeLostService = container.resolve(BecomeLostService)
-  const { characteristics } = request.body
   const personID = Number(request.user.id)
-  const lost = await becomeLostService.handle(request.body.lost, request.body.case, personID, characteristics)
+  const lost = await becomeLostService.handle(request.body, personID)
   return response.json({ lost })
 })
 

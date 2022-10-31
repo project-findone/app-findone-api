@@ -42,7 +42,7 @@ class CreateDisappearedService {
 
       if (!passCheck) {
         const disappeareds = await this.disappearedRepository.findSimilarDisappeareds(request)
-        if (disappeareds.length > 0) return disappeareds
+        if (disappeareds.length > 0) return { status: 'Alert', disappeareds }
       }
 
       const result = await this.disappearedRepository.create(request, ownerID)
@@ -50,7 +50,7 @@ class CreateDisappearedService {
       if (!result) {
         throw new AppError('Houve um erro ao cadastrar o desaparecido.', 500)
       }
-      return result
+      return { status: 'Sucess', disappeared: result }
     } catch (err) {
       throw new AppError('Houve um erro ao invocar o serviço. Por favor, verifique a estrutura da requisição.')
     }

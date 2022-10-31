@@ -14,13 +14,13 @@ disappearedRouter.post('/', ensureAuthenticated, async (request, response) => {
   request.body.birthDate = new Date(birthDate)
   const ownerID = Number(request.user.id)
   const disappeared = await createDisappearedService.handle(request.body, ownerID)
-  return response.json({ disappeared })
+  return response.json(disappeared)
 })
 
 disappearedRouter.get('/', async (request, response) => {
   const queryDisappearedService = container.resolve(QueryDisappearedService)
   const disappeareds = await queryDisappearedService.handle(request.body)
-  return response.json({ disappeareds })
+  return response.json(disappeareds)
 })
 
 export { disappearedRouter }

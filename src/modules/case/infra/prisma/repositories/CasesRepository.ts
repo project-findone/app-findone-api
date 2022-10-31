@@ -6,6 +6,7 @@ import { EntityContribution } from '@modules/supporters/infra/prisma/entites/Con
 
 import { addDays, compareAsc, subHours } from 'date-fns'
 import { DatabaseError } from '@shared/error/DatabaseError'
+import { Case } from '@prisma/client'
 
 export class CasesRepository implements ICasesRepository {
   async archiveCase (personID: number, caseID: number): Promise<EntityContribution[]> {
@@ -117,6 +118,24 @@ export class CasesRepository implements ICasesRepository {
           }
         }
       })
+    } catch (err) {
+      throw new DatabaseError(err)
+    }
+  }
+
+  async findCaseByID (personID: number): Promise<Case | null> {
+    try {
+      const caseFound = await prisma.case.findFirst({ where: { personID } })
+      return caseFound
+    } catch (err) {
+      throw new DatabaseError(err)
+    }
+  }
+
+  async findAllCases (): Promise<Case[] | null> {
+    try {
+      const cases = await prisma.case.findMany()
+      return cases
     } catch (err) {
       throw new DatabaseError(err)
     }
