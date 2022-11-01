@@ -17,7 +17,8 @@ disappearedRouter.post('/', ensureAuthenticated, async (request, response) => {
   return response.json(disappeared)
 })
 
-disappearedRouter.get('/', async (request, response) => {
+disappearedRouter.post('/find', async (request, response) => {
+  console.log(request.body)
   const queryDisappearedService = container.resolve(QueryDisappearedService)
   const disappeareds = await queryDisappearedService.handle(request.body)
   return response.json(disappeareds)

@@ -92,6 +92,24 @@ export class DisappearedRepository implements IDisappearedRepository {
               }
             }
           }
+        },
+        include: {
+          owner: {
+            select: {
+              name: true,
+              lastname: true
+            }
+          },
+          disCharacteristic: {
+            include: {
+              characteristic: {
+                select: {
+                  characteristicName: true,
+                  characteristicTypeName: true
+                }
+              }
+            }
+          }
         }
       })
       return disappeareds as Disappeared[]
