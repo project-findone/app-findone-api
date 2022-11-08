@@ -12,16 +12,17 @@ export default class DisableUserService {
     @inject('UsersRepository')
     private userRepository: IUsersRepository) {}
 
-  public async handle (personID: number): Promise<{}> {
-    if (!personID || typeof personID !== 'number') {
+  public async handle (userID: string): Promise<{}> {
+    if (!userID || typeof userID !== 'string') {
       throw new AppError('Não foi possível acessar o ID do usuário.', 500)
     }
 
     try {
-      await this.userRepository.disable(personID)
-      await middleArchiveService.handle(personID, 'start')
+      await this.userRepository.disable(userID)
+      await middleArchiveService.handle(userID, 'start')
       return {}
-    } catch {
+    } catch (err) {
+      if (err instanceof AppError) throw new AppError(err.message, err.statusCode)
       throw new AppError('Não foi possível realizar a desativação do perfil.', 500)
     }
   }

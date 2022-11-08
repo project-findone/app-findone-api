@@ -1,7 +1,8 @@
-import { EntityContribution } from '../infra/prisma/entites/Contribution'
-import { ICreateContributionDTO } from '../dtos/ICreateContributionDTO'
 import { inject, injectable } from 'tsyringe'
-import { ISupportersRepository } from '../repositories/ISupportersRepository'
+
+import { IUsersRepository } from '../repositories/IUsersRepository'
+import { EntityContribution } from '../infra/prisma/entities/Contribution'
+import { ICreateContributionDTO } from '../dtos/ICreateContributionDTO'
 
 import { AppError } from '@shared/error/AppError'
 
@@ -11,18 +12,18 @@ import { JoiValidationError } from '@shared/error/ValidationError'
 @injectable()
 export class SendContributionService {
   constructor (
-    @inject('SupportersRepository')
-    private supportersRepository: ISupportersRepository
+    @inject('UsersRepository')
+    private userRepository: IUsersRepository
   ) {}
 
-  public async handle (request: ICreateContributionDTO, personID: string): Promise<EntityContribution> {
+  public async handle (request: ICreateContributionDTO, supporterID: string): Promise<EntityContribution> {
     const { error } = createContributionSchema.validate(request)
 
     if (error !== undefined) {
       throw new JoiValidationError(error)
     }
 
-    const contribution = await this.supportersRepository.sendContribution(request, personID)
+    const contribution = await this.userRepository.sendContribution(request, supporterID)
 
     if (!contribution) {
       throw new AppError('Não foi possivel enviar a contribuição.', 500)

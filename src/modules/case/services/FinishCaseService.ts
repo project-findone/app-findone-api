@@ -10,12 +10,12 @@ export default class FinishCaseService {
     @inject('CasesRepository')
     private casesRepository: ICasesRepository) {}
 
-  public async handle (personID: number, caseID: number): Promise<{}> {
-    if (!personID || typeof personID !== 'number') {
+  public async handle (personID: string, caseID: string): Promise<{}> {
+    if (!personID || typeof personID !== 'string') {
       throw new AppError(' Não foi possível acessar o ID do usuário.', 400)
     }
 
-    if (!caseID || typeof caseID !== 'number') {
+    if (!caseID || typeof caseID !== 'string') {
       throw new AppError(' Não foi possível acessar o ID do caso.', 400)
     }
 

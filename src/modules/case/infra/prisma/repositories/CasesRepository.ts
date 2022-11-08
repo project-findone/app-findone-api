@@ -1,15 +1,16 @@
+import { addDays, compareAsc, subHours } from 'date-fns'
+import prisma from '@shared/infra/prisma'
+
+import { EntityContribution } from '@modules/supporters/infra/prisma/entites/Contribution'
+import { CaseEntity } from '../entites/Case'
+
 import { ICasesRepository } from '@modules/case/repositories/ICasesRepository'
 
-import prisma from '@shared/infra/prisma'
-import { EntityContribution } from '@modules/supporters/infra/prisma/entites/Contribution'
-// import { CaseEntity } from '@modules/case/infra/prisma/entites/Case'
-
-import { addDays, compareAsc, subHours } from 'date-fns'
 import { DatabaseError } from '@shared/error/DatabaseError'
-import { Case } from '@prisma/client'
+import { SupportCase } from '@prisma/client'
 
 export class CasesRepository implements ICasesRepository {
-  async archiveCase (personID: number, caseID: number): Promise<EntityContribution[]> {
+  async archiveCase (personID: string, caseID: string): Promise<EntityContribution[]> {
     try {
       const contributions = await prisma.contribution.findMany({
         where: {
@@ -43,7 +44,7 @@ export class CasesRepository implements ICasesRepository {
     }
   }
 
-  async finishCase (personID: number, caseID: number): Promise<EntityContribution[]> {
+  async finishCase (personID: string, caseID: string): Promise<EntityContribution[]> {
     try {
       const contributions = await prisma.contribution.findMany({
         where: {
@@ -76,7 +77,7 @@ export class CasesRepository implements ICasesRepository {
     }
   }
 
-  async reactivateCase (personID: number, caseID: number): Promise<{} | null> {
+  async reactivateCase (personID: string, caseID: string): Promise<{} | null> {
     try {
       const thisCase = await prisma.case.findUnique({ where: { caseID } })
       if (thisCase?.dateArchive) {
@@ -105,7 +106,7 @@ export class CasesRepository implements ICasesRepository {
     }
   }
 
-  async archiveAllCase (personID: number): Promise<void> {
+  async archiveAllCase (personID: string): Promise<void> {
     try {
       await prisma.case.updateMany({
         data: {
@@ -123,18 +124,61 @@ export class CasesRepository implements ICasesRepository {
     }
   }
 
-  async findCaseByID (personID: number): Promise<Case | null> {
+  async findCaseByID (caseID: string): Promise<{case: CaseEntity, supporters: SupportCase[]} | null> {
     try {
-      const caseFound = await prisma.case.findFirst({ where: { personID } })
-      return caseFound
+      const caseFound = await prisma.case.findFirst({
+        where: { caseID },
+        include: {
+          person: {
+            select: {
+              ownerID: true
+            }
+          }
+        }
+      })
+      if (caseFound) {
+        const supportersInCase = await prisma.supportCase.findMany({ where: { caseID } })
+        return { case: caseFound, supporters: supportersInCase }
+      }
+      return null
     } catch (err) {
       throw new DatabaseError(err)
     }
   }
 
-  async findAllCases (): Promise<Case[] | null> {
+  async findAllCases (): Promise<CaseEntity[] | null> {
     try {
       const cases = await prisma.case.findMany()
+      return cases
+    } catch (err) {
+      throw new DatabaseError(err)
+    }
+  }
+
+  async querySupporterCases (supporterID: string): Promise<CaseEntity[] | Array<{}>> {
+    try {
+      const cases = await prisma.supportCase.findMany({
+        where: { personID: supporterID },
+        include: {
+          case: {
+            select: {
+              caseID: true,
+              personID: true
+            }
+          }
+        }
+      })
+      return cases
+    } catch (err) {
+      throw new DatabaseError(err)
+    }
+  }
+
+  async queryOwnerCases (ownerID: string): Promise<CaseEntity[] | Array<{}>> {
+    try {
+      const cases = await prisma.case.findMany({
+        where: { person: { ownerID } }
+      })
       return cases
     } catch (err) {
       throw new DatabaseError(err)

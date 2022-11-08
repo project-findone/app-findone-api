@@ -6,10 +6,10 @@ import { CaseEntity } from '@modules/case/infra/prisma/entites/Case'
 import { ICreateContributionDTO } from '../dtos/ICreateContributionDTO'
 
 export interface ISupportersRepository{
-  becomeSupporter(biografy: string, personID: number): Promise<Supporter>
-  joinCase(caseID: number, personID: number): Promise<{} | null>
-  sendContribution(data: ICreateContributionDTO, personID: number): Promise<EntityContribution>
-  sendAttachment(file: string, contributionID: number): Promise<EntityAttachment>
-  queryCases(personID: number): Promise<CaseEntity[] | Array<{}>>
+  becomeSupporter(biografy: string, personID: string): Promise<Supporter>
+  joinCase(caseID: string, personID: string): Promise<{} | null>
+  sendContribution(data: ICreateContributionDTO, personID: string): Promise<EntityContribution>
+  sendAttachment(file: string, contributionID: string): Promise<EntityAttachment>
+  queryCases(personID: string): Promise<CaseEntity[] | Array<{}>>
   ranking(state: string, city: string): Promise<Supporter[] | Array<{}>>
 }

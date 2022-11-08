@@ -32,6 +32,6 @@ export const ensureAuthenticated = (
 
     return next()
   } catch {
-    throw new AppError('O token informado não é válido.', 401)
+    throw new AppError('O token informado não é válido ou já expirou.', 401)
   }
 }

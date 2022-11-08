@@ -17,7 +17,7 @@ export default class AutomaticArchiveCaseService {
     if (this.archiveTask) { this.archiveTask.stop() }
   }
 
-  public async startTask (personID: number): Promise<void> {
+  public async startTask (personID: string): Promise<void> {
     console.log('Começou')
     this.archiveTask = Cron.schedule('*/1 * * * *', async () => {
       console.log('Executou')

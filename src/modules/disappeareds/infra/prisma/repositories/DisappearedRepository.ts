@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid'
+
 import { ICreateDisappearedDTO } from '@modules/disappeareds/dtos/ICreateDisappearedDTO'
 import { IQueryDisappearedDTO } from '@modules/disappeareds/dtos/IQueryDisappearedDTO'
 import { IDisappearedRepository } from '@modules/disappeareds/repositories/IDisappearedRepository'
@@ -8,10 +10,11 @@ import subHours from 'date-fns/subHours'
 import { DatabaseError } from '@shared/error/DatabaseError'
 
 export class DisappearedRepository implements IDisappearedRepository {
-  async create (data: ICreateDisappearedDTO, ownerID: number): Promise<Disappeared> {
+  async create (data: ICreateDisappearedDTO, ownerID: string): Promise<Disappeared> {
     try {
       const disappeared = await prisma.person.create({
         data: {
+          personID: uuidv4(),
           personTypeID: 2,
           ownerID,
           ...data.disappeared
@@ -21,6 +24,7 @@ export class DisappearedRepository implements IDisappearedRepository {
       for (let index = 0; index < data.characteristics.length; index++) {
         await prisma.disCharacteristic.create({
           data: {
+            disCharacteristicID: uuidv4(),
             personID: disappeared.personID,
             characteristicID: data.characteristics[index]
           }
@@ -29,6 +33,7 @@ export class DisappearedRepository implements IDisappearedRepository {
 
       await prisma.case.create({
         data: {
+          caseID: uuidv4(),
           caseTypeID: 1,
           caseStatusID: 1,
           personID: disappeared.personID,

@@ -1,7 +1,7 @@
 export interface ICreateUserDTO {
   name: string
   lastname: string
-  birthDate: Date
+  birthDate: string | Date
   personCPF: string
   gender: string
   email: string
@@ -10,7 +10,6 @@ export interface ICreateUserDTO {
   personCEP: string
   state: string
   city: string
-  score: 0
   personBiografy: string | null
   personImage: string | null
 }

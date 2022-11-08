@@ -18,7 +18,6 @@ class QueryDisappearedService {
   ) {}
 
   public async handle (request: IQueryDisappearedDTO): Promise<Array<{disappeared: Disappeared, case: Case}>> {
-    console.log(request)
     const disappeareds = await this.disappearedRepository.findDisappearedsByFilters(request)
 
     const cases = await this.casesRepository.findAllCases()

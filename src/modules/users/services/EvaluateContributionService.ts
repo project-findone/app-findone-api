@@ -11,12 +11,12 @@ class EvaluateContributionService {
     private usersRepository: IUsersRepository
   ) {}
 
-  public async handle (personID: number, contributionID: number, score: number): Promise<EntityContribution | undefined | {}> {
-    if (!contributionID || typeof contributionID !== 'number') {
+  public async handle (contributionID: string, score: number): Promise<EntityContribution | undefined | {}> {
+    if (!contributionID || typeof contributionID !== 'string') {
       throw new AppError('Não foi possível acessar o ID da contribuição.', 500)
     }
 
-    const contribution = await this.usersRepository.evaluateContribution(personID, contributionID, score)
+    const contribution = await this.usersRepository.evaluateContribution(contributionID, score)
 
     if (!contribution) {
       throw new AppError('Não foi possível avaliar a contribuição.', 500)

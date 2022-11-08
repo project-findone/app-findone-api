@@ -33,16 +33,17 @@ export class TokenVerificationService {
       throw new AppError('O AES Secret não foi encontrado.', 404)
     }
 
-    const verifyCode = (Math.floor(Math.random() * 10000) + 1000).toString()
+    const verifyCode = String(Math.random()).match(/\d{4}/)
+    if (!verifyCode) throw new AppError('Ocorreu um erro ao gerar o código de verificação', 500)
 
     try {
       const data = {
         to: email,
-        body: verifyCode
+        body: verifyCode[0]
       }
       await this.mailProvider.sendMail(data)
 
-      const codeEncrypted = encrypt(verifyCode, AES.Secret).toString()
+      const codeEncrypted = encrypt(verifyCode[0], AES.Secret)
 
       const token = sign({ codeEncrypted }, JWT.Secret, {
         subject: String(email),
@@ -50,9 +51,9 @@ export class TokenVerificationService {
       })
 
       return { token }
-    } catch (e) {
-      throw new AppError(`Houve um erro ao criar o token de verificação.
-        \n \n${e as string}`, 400)
+    } catch (err) {
+      if (err instanceof AppError) throw new AppError(err.message, err.statusCode)
+      throw new AppError('Houve um erro ao criar o token de verificação.', 500)
     }
   }
 }

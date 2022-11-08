@@ -11,8 +11,8 @@ export class QuerySupportersService {
     private userRepository: IUsersRepository
   ) {}
 
-  public async handle (caseID: number): Promise<Supporter[] | undefined | {}> {
-    if (!caseID || typeof caseID !== 'number') {
+  public async handle (caseID: string): Promise<Supporter[] | undefined | {}> {
+    if (!caseID || typeof caseID !== 'string') {
       throw new AppError('Não foi possível acessar o ID do caso.', 500)
     }
 

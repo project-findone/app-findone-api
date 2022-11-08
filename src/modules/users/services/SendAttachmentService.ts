@@ -1,9 +1,11 @@
 import { inject, injectable } from 'tsyringe'
-import { EntityAttachment } from '../infra/prisma/entites/Attachment'
-import { ISupportersRepository } from '../repositories/ISupportersRepository'
+
+import { EntityAttachment } from '../infra/prisma/entities/Attachment'
+
 import IStorageProvider from '@shared/container/providers/StorageProvider/Models/IStorageProvider'
 
 import { AppError } from '@shared/error/AppError'
+import { IUsersRepository } from '../repositories/IUsersRepository'
 
 interface IRequest {
   fileName: string | undefined
@@ -13,8 +15,8 @@ interface IRequest {
 @injectable()
 export class SendAttachmentService {
   constructor (
-    @inject('SupportersRepository')
-    private supportersRepository: ISupportersRepository,
+    @inject('UsersRepository')
+    private userRepository: IUsersRepository,
 
     @inject('StorageProvider')
     private storageProvider: IStorageProvider
@@ -29,7 +31,7 @@ export class SendAttachmentService {
 
     if (fileName) {
       const newFileName = await this.storageProvider.saveFile(fileName, path)
-      const attachment = await this.supportersRepository.sendAttachment(newFileName, contributionID)
+      const attachment = await this.userRepository.sendAttachment(newFileName, contributionID)
       return attachment
     }
 

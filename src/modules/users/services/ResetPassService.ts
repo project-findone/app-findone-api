@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe'
 import { hash } from 'bcrypt'
+
 import { IUsersRepository } from '../repositories/IUsersRepository'
 import { User } from '../infra/prisma/entities/User'
 

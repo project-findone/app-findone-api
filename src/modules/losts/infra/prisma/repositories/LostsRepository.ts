@@ -1,13 +1,15 @@
+import subHours from 'date-fns/subHours'
+import { v4 as uuidv4 } from 'uuid'
+
 import { ILostsRepository } from '@modules/losts/repositories/ILostsRepository'
 
 import prisma from '@shared/infra/prisma'
 import { Lost } from '../entites/Lost'
 import { IBecomeLostDTO } from '@modules/losts/dtos/IBecomeLostDTO'
-import subHours from 'date-fns/subHours'
 import { DatabaseError } from '@shared/error/DatabaseError'
 
 export class LostsRepository implements ILostsRepository {
-  async becomeLost (data: IBecomeLostDTO, personID: number): Promise<Lost> {
+  async becomeLost (data: IBecomeLostDTO, personID: string): Promise<Lost> {
     try {
       const lost = await prisma.person.update({
         where: { personID },
@@ -21,14 +23,16 @@ export class LostsRepository implements ILostsRepository {
       for (let index = 0; index < data.characteristics.length; index++) {
         await prisma.disCharacteristic.create({
           data: {
+            disCharacteristicID: uuidv4(),
             personID: lost.personID,
-            characteristicID: data.characteristics[index]
+            characteristicID: uuidv4() // data.characteristics[index]
           }
         })
       }
 
       await prisma.case.create({
         data: {
+          caseID: uuidv4(),
           caseTypeID: 2,
           caseStatusID: 1,
           personID: lost.personID,

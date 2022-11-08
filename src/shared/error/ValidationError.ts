@@ -4,6 +4,7 @@ import { AppError } from './AppError'
 export class JoiValidationError {
   private message = 'Os parâmetros são inválidos.'
   constructor (err: ValidationError) {
+    console.error(err)
     const validationErrors = ['is not allowed', 'is required', 'must be a']
 
     validationErrors.forEach((validation, index) => {

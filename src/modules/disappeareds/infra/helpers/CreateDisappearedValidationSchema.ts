@@ -1,10 +1,10 @@
 import joi from 'joi'
 
 export const createDisappearedSchema = joi.object({
-  name: joi.string().alphanum().max(64).required(),
-  lastname: joi.string().alphanum().max(64).required(),
+  name: joi.string().max(64).required(),
+  lastname: joi.string().max(64).required(),
   age: joi.number(),
-  birthDate: joi.date(),
+  birthDate: joi.string(),
   personCPF: joi.string(),
   gender: joi.string().required(),
   personCEP: joi.string().required(),

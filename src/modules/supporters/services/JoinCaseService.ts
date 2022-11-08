@@ -10,8 +10,8 @@ class JoinCaseService {
     private supportersRepository: ISupportersRepository
   ) {}
 
-  public async handle (caseID: number, personID: number): Promise<{} | null> {
-    if (!caseID || typeof caseID !== 'number') {
+  public async handle (caseID: string, personID: string): Promise<{} | null> {
+    if (!caseID || typeof caseID !== 'string') {
       throw new AppError(' Não foi possível acessar o ID do caso.', 500)
     }
 

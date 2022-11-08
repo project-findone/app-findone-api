@@ -11,7 +11,7 @@ export class QueryCasesService {
     private supportersRepository: ISupportersRepository
   ) {}
 
-  public async handle (personID: number): Promise<CaseEntity[] | undefined | {}> {
+  public async handle (personID: string): Promise<CaseEntity[] | undefined | {}> {
     if (!personID) {
       throw new AppError('Alguns parâmetros estão ausentes', 400)
     }

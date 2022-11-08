@@ -10,15 +10,12 @@ const disappearedRouter = Router()
 
 disappearedRouter.post('/', ensureAuthenticated, async (request, response) => {
   const createDisappearedService = container.resolve(CreateDisappearedService)
-  const { birthDate } = request.body
-  request.body.birthDate = new Date(birthDate)
-  const ownerID = Number(request.user.id)
+  const ownerID = request.user.id as string
   const disappeared = await createDisappearedService.handle(request.body, ownerID)
   return response.json(disappeared)
 })
 
 disappearedRouter.post('/find', async (request, response) => {
-  console.log(request.body)
   const queryDisappearedService = container.resolve(QueryDisappearedService)
   const disappeareds = await queryDisappearedService.handle(request.body)
   return response.json(disappeareds)

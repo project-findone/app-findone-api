@@ -1,7 +1,7 @@
-import { Person } from '@prisma/client'
+import { PersonEntity } from '@shared/infra/prisma/entities/Person'
 
-export class Lost implements Person {
-  public personID!: number
+export class Lost extends PersonEntity {
+  public personID!: string
   public personTypeID!: number
   public name!: string
   public lastname!: string
@@ -17,7 +17,7 @@ export class Lost implements Person {
   public city!: string
   public personBiografy!: string | null
   public score!: number | null
-  public ownerID!: number
+  public ownerID!: string
   public personDeficiency!: string
   public personKinship!: string | null
   public personImage!: string | null
@@ -25,6 +25,7 @@ export class Lost implements Person {
   public verified!: boolean
 
   constructor (props: Lost) {
+    super(props)
     Object.assign(this, props)
   }
 }

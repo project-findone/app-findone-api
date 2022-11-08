@@ -1,8 +1,7 @@
 export interface IUpdateUserDTO {
-  personID: number
   name?: string
   lastname?: string
-  birthDate?: Date
+  birthDate?: string
   gender?: string
   email?: string
   password?: string
@@ -12,5 +11,4 @@ export interface IUpdateUserDTO {
   city?: string
   personBiografy?: string | null
   personImage?: string | null
-  verified: boolean | undefined
 }

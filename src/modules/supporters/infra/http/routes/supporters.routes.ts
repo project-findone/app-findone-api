@@ -33,7 +33,7 @@ supportersRouter.post('/:caseID', ensureAuthenticated, async (request, response)
   return response.json({ message: supporter })
 })
 
-supportersRouter.post('/', ensureAuthenticated, async (request, response) => {
+supportersRouter.post('/contribution', ensureAuthenticated, async (request, response) => {
   const sendContributionService = container.resolve(SendContributionService)
   const personID = Number(request.user.id)
   const contribution = await sendContributionService.handle(request.body, personID)

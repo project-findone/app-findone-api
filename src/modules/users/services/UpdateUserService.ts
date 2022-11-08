@@ -15,25 +15,24 @@ export class UpdateUserService {
     private userRepository: IUsersRepository
   ) {}
 
-  public async handle (request: IUpdateUserDTO, personID: number): Promise<User | undefined | {}> {
+  public async handle (request: IUpdateUserDTO, userID: string): Promise<User | undefined | {}> {
     const { password, email } = request
 
-    const requestParams: Omit<IUpdateUserDTO, 'verified'> = request
-
-    const { error } = updateUserSchema.validate(requestParams)
+    const { error } = updateUserSchema.validate(request)
 
     if (error !== undefined) {
       throw new JoiValidationError(error)
     }
 
     if (email) {
-      const userByEmail = await this.userRepository.findByEmail(email)
+      const userToUpdate = await this.userRepository.findByID(userID)
+      if (userToUpdate?.email !== email) {
+        const userByEmail = await this.userRepository.findByEmail(email)
 
-      if (userByEmail) {
-        throw new AppError('Esse e-mail está indisponível.', 404)
+        if (userByEmail) {
+          throw new AppError('Esse e-mail está indisponível.', 403)
+        }
       }
-
-      request.verified = false
     }
 
     if (password) {
@@ -46,7 +45,7 @@ export class UpdateUserService {
       request.password = hashedPassword
     }
 
-    const user = await this.userRepository.update(request, personID)
+    const user = await this.userRepository.update(request, userID)
 
     if (!user) {
       throw new AppError('Houve um erro ao alterar o usuário.', 500)

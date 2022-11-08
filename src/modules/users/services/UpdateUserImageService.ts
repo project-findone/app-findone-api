@@ -7,7 +7,7 @@ import { AppError } from '@shared/error/AppError'
 
 interface IRequest {
   fileName: string | undefined
-  personID: number
+  userID: string
 }
 
 @injectable()
@@ -20,9 +20,9 @@ export class UpdateUserImageService {
     private storageProvider: IStorageProvider
   ) {}
 
-  public async handle ({ personID, fileName }: IRequest): Promise<User | undefined | {}> {
+  public async handle ({ userID, fileName }: IRequest): Promise<User | undefined | {}> {
     try {
-      const { personImage } = await this.userRepository.findByID(personID) as User
+      const { personImage } = await this.userRepository.findByID(userID) as User
       const path = 'images'
 
       if (personImage) {
@@ -30,10 +30,11 @@ export class UpdateUserImageService {
       }
       if (fileName) {
         const newFileName = await this.storageProvider.saveFile(fileName, path)
-        const user = await this.userRepository.updateImage(newFileName, personID)
+        const user = await this.userRepository.updateImage(newFileName, userID)
         return { message: user }
       }
-    } catch {
+    } catch (err) {
+      if (err instanceof AppError) throw new AppError(err.message, err.statusCode)
       throw new AppError('Não foi possível atualizar a imagem do usuário.', 500)
     }
   }

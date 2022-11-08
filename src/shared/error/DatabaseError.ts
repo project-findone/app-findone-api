@@ -4,6 +4,7 @@ import { AppError } from './AppError'
 export class DatabaseError {
   private message = 'Não foi possível realizar a invocação com o banco de dados'
   constructor (err: any) {
+    console.error(err)
     if (err instanceof PrismaClientInitializationError) {
       this.message = 'Não foi possível realizar a comunicação com o banco de dados'
     }

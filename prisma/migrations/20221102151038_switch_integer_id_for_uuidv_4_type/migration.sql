@@ -1,0 +1,120 @@
+/*
+  Warnings:
+
+  - The primary key for the `tb_anexo` table will be changed. If it partially fails, the table could be left without primary key constraint.
+  - The primary key for the `tb_apoia_caso` table will be changed. If it partially fails, the table could be left without primary key constraint.
+  - The primary key for the `tb_carac_desa` table will be changed. If it partially fails, the table could be left without primary key constraint.
+  - The primary key for the `tb_caracteristica` table will be changed. If it partially fails, the table could be left without primary key constraint.
+  - The primary key for the `tb_caso` table will be changed. If it partially fails, the table could be left without primary key constraint.
+  - The primary key for the `tb_contribuicao` table will be changed. If it partially fails, the table could be left without primary key constraint.
+  - The primary key for the `tb_pessoa` table will be changed. If it partially fails, the table could be left without primary key constraint.
+  - The primary key for the `tb_sessao_chat` table will be changed. If it partially fails, the table could be left without primary key constraint.
+  - A unique constraint covering the columns `[TB_PESSOA_CPF]` on the table `TB_PESSOA` will be added. If there are existing duplicate values, this will fail.
+
+*/
+-- DropForeignKey
+ALTER TABLE `tb_anexo` DROP FOREIGN KEY `TB_ANEXO_ID_TB_CONTRIBUICAO_FK`;
+
+-- DropForeignKey
+ALTER TABLE `tb_apoia_caso` DROP FOREIGN KEY `TB_APOIA_CASO_ID_TB_CASO_FK`;
+
+-- DropForeignKey
+ALTER TABLE `tb_apoia_caso` DROP FOREIGN KEY `TB_APOIA_CASO_ID_TB_PESSOA_FK`;
+
+-- DropForeignKey
+ALTER TABLE `tb_carac_desa` DROP FOREIGN KEY `TB_CARAC_DESA_ID_TB_CARACTERISTICA_FK`;
+
+-- DropForeignKey
+ALTER TABLE `tb_carac_desa` DROP FOREIGN KEY `TB_CARAC_DESA_ID_TB_PESSOA_FK`;
+
+-- DropForeignKey
+ALTER TABLE `tb_caso` DROP FOREIGN KEY `TB_CASO_ID_TB_PESSOA_FK`;
+
+-- DropForeignKey
+ALTER TABLE `tb_contribuicao` DROP FOREIGN KEY `TB_CONTRIBUICAO_ID_TB_SESSAO_CHAT_FK`;
+
+-- DropForeignKey
+ALTER TABLE `tb_pessoa` DROP FOREIGN KEY `TB_PESSOA_ID_TB_PESSOA_RESPONSAVEL_FK`;
+
+-- DropForeignKey
+ALTER TABLE `tb_sessao_chat` DROP FOREIGN KEY `TB_SESSAO_CHAT_ID_TB_APOIA_CASO_FK`;
+
+-- AlterTable
+ALTER TABLE `tb_anexo` DROP PRIMARY KEY,
+    MODIFY `TB_ANEXO_ID` VARCHAR(191) NOT NULL,
+    MODIFY `TB_CONTRIBUICAO_ID_FK` VARCHAR(191) NOT NULL,
+    ADD PRIMARY KEY (`TB_ANEXO_ID`);
+
+-- AlterTable
+ALTER TABLE `tb_apoia_caso` DROP PRIMARY KEY,
+    MODIFY `TB_APOIA_CASO_ID` VARCHAR(191) NOT NULL,
+    MODIFY `TB_PESSOA_ID_FK` VARCHAR(191) NOT NULL,
+    MODIFY `TB_CASO_ID_FK` VARCHAR(191) NOT NULL,
+    ADD PRIMARY KEY (`TB_APOIA_CASO_ID`);
+
+-- AlterTable
+ALTER TABLE `tb_carac_desa` DROP PRIMARY KEY,
+    MODIFY `TB_CARAC_DESA_ID` VARCHAR(191) NOT NULL,
+    MODIFY `TB_PESSOA_ID_FK` VARCHAR(191) NOT NULL,
+    MODIFY `TB_CARACTERISTICA_ID_FK` VARCHAR(191) NOT NULL,
+    ADD PRIMARY KEY (`TB_CARAC_DESA_ID`);
+
+-- AlterTable
+ALTER TABLE `tb_caracteristica` DROP PRIMARY KEY,
+    MODIFY `TB_CARACTERISTICA_ID` VARCHAR(191) NOT NULL,
+    ADD PRIMARY KEY (`TB_CARACTERISTICA_ID`);
+
+-- AlterTable
+ALTER TABLE `tb_caso` DROP PRIMARY KEY,
+    MODIFY `TB_CASO_ID` VARCHAR(191) NOT NULL,
+    MODIFY `TB_CASO_PESSOA_ID_FK` VARCHAR(191) NOT NULL,
+    ADD PRIMARY KEY (`TB_CASO_ID`);
+
+-- AlterTable
+ALTER TABLE `tb_contribuicao` DROP PRIMARY KEY,
+    MODIFY `TB_CONTRIBUICAO_ID` VARCHAR(191) NOT NULL,
+    MODIFY `TB_SESSAO_CHAT_ID_FK` VARCHAR(191) NOT NULL,
+    MODIFY `TB_CONTRIBUICAO_EMISSOR` VARCHAR(191) NOT NULL,
+    ADD PRIMARY KEY (`TB_CONTRIBUICAO_ID`);
+
+-- AlterTable
+ALTER TABLE `tb_pessoa` DROP PRIMARY KEY,
+    MODIFY `TB_PESSOA_ID` VARCHAR(191) NOT NULL,
+    MODIFY `TB_PESSOA_RESPONSAVEL_FK` VARCHAR(191) NULL,
+    ADD PRIMARY KEY (`TB_PESSOA_ID`);
+
+-- AlterTable
+ALTER TABLE `tb_sessao_chat` DROP PRIMARY KEY,
+    MODIFY `TB_SESSAO_CHAT_ID` VARCHAR(191) NOT NULL,
+    MODIFY `TB_APOIA_CASO_ID_FK` VARCHAR(191) NOT NULL,
+    ADD PRIMARY KEY (`TB_SESSAO_CHAT_ID`);
+
+-- CreateIndex
+CREATE UNIQUE INDEX `TB_PESSOA_TB_PESSOA_CPF_key` ON `TB_PESSOA`(`TB_PESSOA_CPF`);
+
+-- AddForeignKey
+ALTER TABLE `TB_PESSOA` ADD CONSTRAINT `TB_PESSOA_ID_TB_PESSOA_RESPONSAVEL_FK` FOREIGN KEY (`TB_PESSOA_RESPONSAVEL_FK`) REFERENCES `TB_PESSOA`(`TB_PESSOA_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE `TB_CARAC_DESA` ADD CONSTRAINT `TB_CARAC_DESA_ID_TB_PESSOA_FK` FOREIGN KEY (`TB_PESSOA_ID_FK`) REFERENCES `TB_PESSOA`(`TB_PESSOA_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE `TB_CARAC_DESA` ADD CONSTRAINT `TB_CARAC_DESA_ID_TB_CARACTERISTICA_FK` FOREIGN KEY (`TB_CARACTERISTICA_ID_FK`) REFERENCES `TB_CARACTERISTICA`(`TB_CARACTERISTICA_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE `TB_CASO` ADD CONSTRAINT `TB_CASO_ID_TB_PESSOA_FK` FOREIGN KEY (`TB_CASO_PESSOA_ID_FK`) REFERENCES `TB_PESSOA`(`TB_PESSOA_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE `TB_APOIA_CASO` ADD CONSTRAINT `TB_APOIA_CASO_ID_TB_PESSOA_FK` FOREIGN KEY (`TB_PESSOA_ID_FK`) REFERENCES `TB_PESSOA`(`TB_PESSOA_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE `TB_APOIA_CASO` ADD CONSTRAINT `TB_APOIA_CASO_ID_TB_CASO_FK` FOREIGN KEY (`TB_CASO_ID_FK`) REFERENCES `TB_CASO`(`TB_CASO_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE `TB_SESSAO_CHAT` ADD CONSTRAINT `TB_SESSAO_CHAT_ID_TB_APOIA_CASO_FK` FOREIGN KEY (`TB_APOIA_CASO_ID_FK`) REFERENCES `TB_APOIA_CASO`(`TB_APOIA_CASO_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE `TB_CONTRIBUICAO` ADD CONSTRAINT `TB_CONTRIBUICAO_ID_TB_SESSAO_CHAT_FK` FOREIGN KEY (`TB_SESSAO_CHAT_ID_FK`) REFERENCES `TB_SESSAO_CHAT`(`TB_SESSAO_CHAT_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE `TB_ANEXO` ADD CONSTRAINT `TB_ANEXO_ID_TB_CONTRIBUICAO_FK` FOREIGN KEY (`TB_CONTRIBUICAO_ID_FK`) REFERENCES `TB_CONTRIBUICAO`(`TB_CONTRIBUICAO_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION;

@@ -15,7 +15,7 @@ export class BecomeSupporterService {
     private supportersRepository: ISupportersRepository
   ) {}
 
-  public async handle (request: IRequest, personID: number): Promise<Supporter | undefined | {}> {
+  public async handle (request: IRequest, personID: string): Promise<Supporter | undefined | {}> {
     const { personBiografy } = request
 
     if (!personBiografy || !personID) {

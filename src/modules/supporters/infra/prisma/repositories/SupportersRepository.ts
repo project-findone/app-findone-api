@@ -1,3 +1,6 @@
+import subHours from 'date-fns/subHours'
+import { v4 as uuidv4 } from 'uuid'
+
 import { ISupportersRepository } from '@modules/supporters/repositories/ISupportersRepository'
 
 import prisma from '@shared/infra/prisma'
@@ -7,11 +10,11 @@ import { EntityAttachment } from '../entites/Attachment'
 import { Supporter } from '../entites/Supporter'
 import { CaseEntity } from '@modules/case/infra/prisma/entites/Case'
 import { ICreateContributionDTO } from '@modules/supporters/dtos/ICreateContributionDTO'
-import subHours from 'date-fns/subHours'
+
 import { DatabaseError } from '@shared/error/DatabaseError'
 
 export class SupportersRepository implements ISupportersRepository {
-  async becomeSupporter (biografy: string, personID: number): Promise<Supporter> {
+  async becomeSupporter (biografy: string, personID: string): Promise<Supporter> {
     try {
       const supporter = await prisma.person.update({
         where: { personID },
@@ -27,13 +30,14 @@ export class SupportersRepository implements ISupportersRepository {
     }
   }
 
-  async joinCase (caseID: number, personID: number): Promise<{} | null> {
+  async joinCase (caseID: string, personID: string): Promise<{} | null> {
     try {
       const disCase = await prisma.case.findUnique({ where: { caseID } })
       const disPerson = await prisma.person.findUnique({ where: { personID } })
       if (disCase?.caseStatusID === 1 && disPerson?.personTypeID === 4) {
         const supportCase = await prisma.supportCase.create({
           data: {
+            supportCaseID: uuidv4(),
             personID,
             caseID,
             dateEntry: subHours(new Date(), 3)
@@ -41,6 +45,7 @@ export class SupportersRepository implements ISupportersRepository {
         })
         await prisma.sessionChat.create({
           data: {
+            sessionChatID: uuidv4(),
             supportCaseID: supportCase.supportCaseID
           }
         })
@@ -52,10 +57,11 @@ export class SupportersRepository implements ISupportersRepository {
     }
   }
 
-  async sendContribution (data: ICreateContributionDTO, personID: number): Promise<EntityContribution> {
+  async sendContribution (data: ICreateContributionDTO, personID: string): Promise<EntityContribution> {
     try {
       const contribution = await prisma.contribution.create({
         data: {
+          contributionID: uuidv4(),
           ...data,
           dateTimeSend: subHours(new Date(), 3),
           issuer: personID
@@ -67,10 +73,11 @@ export class SupportersRepository implements ISupportersRepository {
     }
   }
 
-  async sendAttachment (file: string, contributionID: number): Promise<EntityAttachment> {
+  async sendAttachment (file: string, contributionID: string): Promise<EntityAttachment> {
     try {
       const attachment = await prisma.attachment.create({
         data: {
+          attachmentID: uuidv4(),
           attachmentName: file,
           contributionID
         }
@@ -81,7 +88,7 @@ export class SupportersRepository implements ISupportersRepository {
     }
   }
 
-  async queryCases (personID: number): Promise<CaseEntity[] | Array<{}>> {
+  async queryCases (personID: string): Promise<CaseEntity[] | Array<{}>> {
     try {
       const cases = await prisma.supportCase.findMany({
         where: { personID },
@@ -104,7 +111,7 @@ export class SupportersRepository implements ISupportersRepository {
     try {
       const supporters = await prisma.person.findMany({
         where: {
-          personTypeID: 4,
+          personTypeID: 1,
           state,
           city
         },

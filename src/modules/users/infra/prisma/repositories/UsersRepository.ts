@@ -1,22 +1,27 @@
+import prisma from '@shared/infra/prisma'
+import { v4 as uuidv4 } from 'uuid'
+
+import { User } from '../entities/User'
+import { EntityContribution } from '@modules/supporters/infra/prisma/entites/Contribution'
+
 import { ICreateUserDTO } from '@modules/users/dtos/ICreateUserDTO'
 import { IUpdateUserDTO } from '@modules/users/dtos/IUpdateUserDTO'
 import { IUsersRepository } from '@modules/users/repositories/IUsersRepository'
 
-import prisma from '@shared/infra/prisma'
-import { User } from '../entities/User'
-import { Supporter } from '@modules/supporters/infra/prisma/entites/Supporter'
-import { EntityContribution } from '@modules/supporters/infra/prisma/entites/Contribution'
-import { CaseEntity } from '@modules/case/infra/prisma/entites/Case'
-import { PersonEntity } from '@shared/infra/prisma/entities/Person'
 import subHours from 'date-fns/subHours'
+
 import { DatabaseError } from '@shared/error/DatabaseError'
+import { ICreateContributionDTO } from '@modules/users/dtos/ICreateContributionDTO'
+import { EntityAttachment } from '../entities/Attachment'
 
 export class UsersRepository implements IUsersRepository {
   async create (data: ICreateUserDTO): Promise<User> {
     try {
       const user = await prisma.person.create({
         data: {
+          personID: uuidv4(),
           personTypeID: 1,
+          score: 0,
           ...data
         }
       })
@@ -35,10 +40,19 @@ export class UsersRepository implements IUsersRepository {
     }
   }
 
-  async findByID (personID: number): Promise<User | null> {
+  async findByID (userID: string): Promise<User | null> {
     try {
-      const userFiltred = await prisma.person.findUnique({ where: { personID } })
+      const userFiltred = await prisma.person.findUnique({ where: { personID: userID } })
       return userFiltred as User
+    } catch (err) {
+      throw new DatabaseError(err)
+    }
+  }
+
+  async findByCPF (personCPF: string): Promise<User | null> {
+    try {
+      const userFounded = await prisma.person.findUnique({ where: { personCPF } })
+      return userFounded as User
     } catch (err) {
       throw new DatabaseError(err)
     }
@@ -75,12 +89,13 @@ export class UsersRepository implements IUsersRepository {
     }
   }
 
-  async update (data: IUpdateUserDTO, personID: number): Promise<User> {
+  async update (data: IUpdateUserDTO, userID: string): Promise<User> {
     try {
       const userUpdated = await prisma.person.update({
-        where: { personID },
+        where: { personID: userID },
         data: {
-          ...data
+          ...data,
+          verified: true
         }
       })
       return userUpdated as User
@@ -89,10 +104,10 @@ export class UsersRepository implements IUsersRepository {
     }
   }
 
-  async updateImage (image: string, personID: number): Promise<User> {
+  async updateImage (image: string, userID: string): Promise<User> {
     try {
       const userUpdated = await prisma.person.update({
-        where: { personID },
+        where: { personID: userID },
         data: { personImage: image }
       })
       return userUpdated as User
@@ -101,10 +116,10 @@ export class UsersRepository implements IUsersRepository {
     }
   }
 
-  async disable (personID: number): Promise<void> {
+  async disable (userID: string): Promise<void> {
     try {
       await prisma.person.update({
-        where: { personID },
+        where: { personID: userID },
         data: { disabled: true }
       })
     } catch (err) {
@@ -112,7 +127,7 @@ export class UsersRepository implements IUsersRepository {
     }
   }
 
-  async evaluateContribution (personID: number, contributionID: number, score: number): Promise<EntityContribution> {
+  async evaluateContribution (contributionID: string, score: number): Promise<EntityContribution> {
     try {
       const contribution = await prisma.contribution.update({
         where: { contributionID },
@@ -136,23 +151,7 @@ export class UsersRepository implements IUsersRepository {
     }
   }
 
-  async queryCases (personID: number): Promise<CaseEntity[] | Array<{}>> {
-    try {
-      const cases = await prisma.case.findMany({
-        where: {
-          person: {
-            ownerID: personID
-          }
-        }
-      })
-
-      return cases as CaseEntity[]
-    } catch (err) {
-      throw new DatabaseError(err)
-    }
-  }
-
-  async querySupporters (caseID: number): Promise<Supporter[] | Array<{}>> {
+  async querySupporters (caseID: string): Promise<User[] | Array<{}>> {
     try {
       const supporters = await prisma.supportCase.findMany({
         where: { caseID },
@@ -174,19 +173,10 @@ export class UsersRepository implements IUsersRepository {
     }
   }
 
-  async findUserByID (personID: number): Promise<PersonEntity> {
-    try {
-      const person = await prisma.person.findUnique({ where: { personID } })
-      return person as PersonEntity
-    } catch (err) {
-      throw new DatabaseError(err)
-    }
-  }
-
-  async login (personID: number): Promise<void> {
+  async login (userID: string): Promise<void> {
     try {
       await prisma.person.update({
-        where: { personID },
+        where: { personID: userID },
         data: { login: subHours(new Date(), 3) }
       })
     } catch (err) {
@@ -194,12 +184,109 @@ export class UsersRepository implements IUsersRepository {
     }
   }
 
-  async logout (personID: number): Promise<void> {
+  async logout (userID: string): Promise<void> {
     try {
       await prisma.person.update({
-        where: { personID },
+        where: { personID: userID },
         data: { logout: subHours(new Date(), 3) }
       })
+    } catch (err) {
+      throw new DatabaseError(err)
+    }
+  }
+
+  async becomeSupporter (biografy: string, personID: string): Promise<User> {
+    try {
+      const supporter = await prisma.person.update({
+        where: { personID },
+        data: {
+          personTypeID: 4,
+          personBiografy: biografy,
+          score: 0
+        }
+      })
+      return supporter as User
+    } catch (err) {
+      throw new DatabaseError(err)
+    }
+  }
+
+  async joinCase (caseID: string, supporterID: string): Promise<{} | null> {
+    try {
+      const supportCase = await prisma.supportCase.create({
+        data: {
+          supportCaseID: uuidv4(),
+          personID: supporterID,
+          caseID,
+          dateEntry: subHours(new Date(), 3)
+        }
+      })
+      await prisma.sessionChat.create({
+        data: {
+          sessionChatID: uuidv4(),
+          supportCaseID: supportCase.supportCaseID
+        }
+      })
+      return supportCase
+    } catch (err) {
+      throw new DatabaseError(err)
+    }
+  }
+
+  async sendContribution (data: ICreateContributionDTO, supporterID: string): Promise<EntityContribution> {
+    try {
+      const contribution = await prisma.contribution.create({
+        data: {
+          contributionID: uuidv4(),
+          ...data,
+          dateTimeSend: subHours(new Date(), 3),
+          issuer: supporterID
+        }
+      })
+      return contribution as EntityContribution
+    } catch (err) {
+      throw new DatabaseError(err)
+    }
+  }
+
+  async sendAttachment (file: string, contributionID: string): Promise<EntityAttachment> {
+    try {
+      const attachment = await prisma.attachment.create({
+        data: {
+          attachmentID: uuidv4(),
+          attachmentName: file,
+          contributionID
+        }
+      })
+      return attachment as EntityAttachment
+    } catch (err) {
+      throw new DatabaseError(err)
+    }
+  }
+
+  async ranking (state: string, city: string): Promise<User[] | Array<{}>> {
+    try {
+      const supporters = await prisma.person.findMany({
+        where: {
+          personTypeID: 1,
+          state,
+          city
+        },
+        orderBy: {
+          score: 'desc'
+        },
+        select: {
+          personTypeID: true,
+          personID: true,
+          name: true,
+          lastname: true,
+          personBiografy: true,
+          state: true,
+          city: true,
+          score: true
+        }
+      })
+      return supporters
     } catch (err) {
       throw new DatabaseError(err)
     }

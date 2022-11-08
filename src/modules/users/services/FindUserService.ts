@@ -1,6 +1,7 @@
 import { inject, injectable } from 'tsyringe'
-import { PersonEntity } from '@shared/infra/prisma/entities/Person'
+
 import { IUsersRepository } from '../repositories/IUsersRepository'
+import { User } from '../infra/prisma/entities/User'
 
 import { AppError } from '@shared/error/AppError'
 
@@ -11,12 +12,12 @@ export class FindUserService {
     private userRepository: IUsersRepository
   ) {}
 
-  public async handle (personID: number): Promise<PersonEntity | undefined | {}> {
-    if (!personID) {
+  public async handle (userID: string): Promise<User | undefined | {}> {
+    if (!userID) {
       throw new AppError('Alguns parâmetros estão ausentes', 400)
     }
 
-    const person = await this.userRepository.findUserByID(personID)
+    const { password, ...person } = await this.userRepository.findByID(userID) as User
 
     if (!person) {
       throw new AppError('Nenhuma pessoa foi encontrada.', 404)

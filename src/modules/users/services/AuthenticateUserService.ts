@@ -9,12 +9,13 @@ import { AppError } from '@shared/error/AppError'
 
 import { middleArchiveService } from '@modules/case/services/MiddleArchiveService'
 
-interface Request{
-  email: string
+interface IRequest{
+  email?: string
+  personCPF?: string
   password: string
 }
 
-interface Response {
+interface IResponse {
   userResponse: User | {}
   token: string
 }
@@ -25,17 +26,21 @@ export class AuthenticateUserService {
     @inject('UsersRepository')
     private usersRepository: IUsersRepository) {}
 
-  public async handle (request: Request): Promise<Response | null> {
-    const { email, password } = request
+  public async handle (request: IRequest): Promise<IResponse | null> {
+    const { email, personCPF, password } = request
     const { JWT } = AuthConfig
 
-    const user = await this.usersRepository.findByEmail(email)
+    if ((!email && !personCPF) || !password) throw new AppError('Alguns parâmetros estão ausentes', 400)
+
+    const user = email ? await this.usersRepository.findByEmail(email) : await this.usersRepository.findByCPF(String(personCPF as string))
 
     if (!user) {
-      throw new AppError('O e-mail informado não existe.', 404)
+      throw new AppError('O e-mail ou CPF informado não existe.', 404)
     }
 
-    const passMatched = await compare(password, user.password)
+    if (user.disabled) throw new AppError('Este perfil está desativado, reative-o para que possa acessá-lo novamente.', 403)
+
+    const passMatched = await compare(String(password), user.password)
 
     if (!passMatched) {
       throw new AppError('Os parâmetros email/senha não coincidem.', 401)
@@ -43,7 +48,7 @@ export class AuthenticateUserService {
 
     try {
       const token = sign({}, JWT.Secret, {
-        subject: String(user.personID),
+        subject: user.personID,
         expiresIn: '1d'
       })
 
@@ -56,7 +61,8 @@ export class AuthenticateUserService {
         userResponse,
         token
       }
-    } catch {
+    } catch (err) {
+      if (err instanceof AppError) throw new AppError(err.message, err.statusCode)
       throw new AppError('O JWTSecret não foi encontrado.', 503)
     }
   }

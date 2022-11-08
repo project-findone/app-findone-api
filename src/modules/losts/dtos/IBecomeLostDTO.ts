@@ -3,7 +3,7 @@ export interface IBecomeLostDTO {
     name: string
     lastname: string
     age: number
-    birthDate: Date
+    birthDate: string | Date
     personCPF: string
     gender: string
     personCEP: string
