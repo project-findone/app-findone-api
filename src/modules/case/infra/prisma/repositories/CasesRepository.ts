@@ -7,7 +7,8 @@ import { CaseEntity } from '../entites/Case'
 import { ICasesRepository } from '@modules/case/repositories/ICasesRepository'
 
 import { DatabaseError } from '@shared/error/DatabaseError'
-import { SupportCase } from '@prisma/client'
+import { Prisma, SupportCase } from '@prisma/client'
+import { Disappeared } from '@modules/disappeareds/infra/prisma/entites/Disappeared'
 
 export class CasesRepository implements ICasesRepository {
   async archiveCase (personID: string, caseID: string): Promise<EntityContribution[]> {
@@ -157,18 +158,34 @@ export class CasesRepository implements ICasesRepository {
 
   async querySupporterCases (supporterID: string): Promise<CaseEntity[] | Array<{}>> {
     try {
-      const cases = await prisma.supportCase.findMany({
-        where: { personID: supporterID },
+      const cases = await prisma.sessionChat.findMany({
+        where: { supportCase: { personID: supporterID } },
         include: {
-          case: {
-            select: {
-              caseID: true,
-              personID: true
+          supportCase: {
+            include: {
+              case: {
+                select: {
+                  personID: true
+                }
+              }
             }
           }
         }
       })
-      return cases
+      const disappeareds = await prisma.person.findMany()
+
+      return cases.map((currentCase) => {
+        let disappearedFound: Disappeared | null = null
+        disappeareds.every((dis) => {
+          if (dis.personID === currentCase.supportCase.case.personID) {
+            disappearedFound = dis as Disappeared
+            return false
+          }
+          return true
+        })
+        if (!disappearedFound) throw new Error()
+        return { session: currentCase, disappeared: disappearedFound }
+      })
     } catch (err) {
       throw new DatabaseError(err)
     }
