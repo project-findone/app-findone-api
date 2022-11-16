@@ -94,6 +94,7 @@ async function main (): Promise<void> {
       { characteristicTypeName: 'Cor dos olhos', characteristicName: 'Azul' },
       { characteristicTypeName: 'Cor dos olhos', characteristicName: 'Verde' },
       { characteristicTypeName: 'Cor dos olhos', characteristicName: 'Castanho' },
+      { characteristicTypeName: 'Cor dos olhos', characteristicName: 'Castanho Escuro' },
 
       { characteristicTypeName: 'Cor da pele', characteristicName: 'Branca' },
       { characteristicTypeName: 'Cor da pele', characteristicName: 'Preta' },
@@ -102,10 +103,12 @@ async function main (): Promise<void> {
       { characteristicTypeName: 'Cor do cabelo', characteristicName: 'Loiro' },
       { characteristicTypeName: 'Cor do cabelo', characteristicName: 'Preto' },
       { characteristicTypeName: 'Cor do cabelo', characteristicName: 'Castanho' },
+      { characteristicTypeName: 'Cor do cabelo', characteristicName: 'Ruivo' },
 
       { characteristicTypeName: 'Tipo do cabelo', characteristicName: 'Liso' },
-      { characteristicTypeName: 'Tipo do cabelo', characteristicName: 'Cacheados' },
-      { characteristicTypeName: 'Tipo do cabelo', characteristicName: 'Crespos' }
+      { characteristicTypeName: 'Tipo do cabelo', characteristicName: 'Cacheado' },
+      { characteristicTypeName: 'Tipo do cabelo', characteristicName: 'Crespo' },
+      { characteristicTypeName: 'Tipo do cabelo', characteristicName: 'Ondulado' }
     ]
   })
   await prisma.caseType.createMany({

@@ -24,6 +24,7 @@ class CreateDisappearedService {
 
   public async handle (request: ICreateDisappearedDTO, ownerID: string): Promise<Disappeared | Disappeared[] | undefined | {} | []> {
     try {
+      console.log(request)
       const { characteristics, disappeared, disappeared: { birthDate, personCPF }, case: caseDisappeared, passCheck } = request
       if (!disappeared || !caseDisappeared || !characteristics) throw new AppError('Alguns parâmetros estão ausentes', 400)
       if (!ownerID) throw new AppError('Não foi possível acessar o ID do responsável', 500)
